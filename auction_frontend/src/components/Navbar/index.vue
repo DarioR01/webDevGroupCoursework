@@ -1,3 +1,7 @@
+<script setup>
+  import { RouterView, RouterLink } from 'vue-router'
+</script>
+
 <template>
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
   <div class="container-fluid">
@@ -8,10 +12,10 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" aria-current="page" href="#">Home</a>
+          <router-link :to="{ name: 'Home' }" class="nav-link" aria-current="home">Home</router-link>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">Profile</a>
+          <router-link :to="{ name: 'Profile' }" class="nav-link" aria-current="profile">Profile</router-link>
         </li>
       </ul>
       <form class="d-flex" role="search">
@@ -20,4 +24,5 @@
     </div>
   </div>
 </nav>
+<router-view/>
 </template>
