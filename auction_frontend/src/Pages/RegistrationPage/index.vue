@@ -9,40 +9,48 @@
                 <div class="row g-2">
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" placeholder="name" class="form-control" id="name" v-model="name">
+                            <input type="text" placeholder="name"
+                                v-bind:class="{ 'form-control': true, 'is-invalid': formValidity.name }"
+                                v-on:blur="(isValidName(name))" id="name" v-model="name">
                             <label for="name">Name</label>
                         </div>
                     </div>
                     <div class="col-md">
                         <div class="form-floating mb-3">
-                            <input type="text" placeholder="surname" class="form-control" id="surname"
-                                v-model="surname">
+                            <input type="text" placeholder="surname"
+                                v-bind:class="{ 'form-control': true, 'is-invalid': formValidity.surname }"
+                                v-on:blur="(isValidSurname(surname))" id="surname" v-model="surname">
                             <label for="surname">Surname</label>
                         </div>
                     </div>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" placeholder="email" v-model="email">
+                    <input type="email" v-model="email" v-bind:class="{
+                        'form-control': true, 'is-invalid': formValidity.email
+                    }" v-on:blur="isValidEmail(email);" id="email" placeholder="email">
                     <label for="email">Email address</label>
                 </div>
 
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="password" placeholder="password" v-model="password">
+                    <input type="password" v-bind:class="{ 'form-control': true, 'is-invalid': formValidity.password }"
+                        v-on:blur="(isValidPassword(password))" id="password" placeholder="password" v-model="password">
                     <label for="password">Password</label>
                 </div>
 
                 <div class="input-group row g-2">
                     <div class="col-md">
                         <div class="form-floating">
-                            <input type="tel" maxlength="2" placeholder="Day" class="form-control form-control-sm"
+                            <input type="tel" maxlength="2" placeholder="Day"
+                                v-bind:class="{ 'form-control': true, 'form-control-sm': true, 'is-invalid': formValidity.date }"
                                 id="day" v-model="day" />
                             <label for="day">Day</label>
                         </div>
                     </div>
                     <div class="col-md">
-                        <select class="form-select form-control" style="height: 3.625rem; padding: 1rem;"
-                            v-model="month">
+                        <select
+                            v-bind:class="{ 'form-control': true, 'form-select': true, 'is-invalid': formValidity.date }"
+                            style="height: 3.625rem; padding: 1rem;" v-model="month">
                             <option selected>Month</option>
                             <template v-for="month in months">
                                 <option :value="month">{{ month }}</option>
@@ -52,7 +60,9 @@
 
                     <div class="col-md">
                         <div class="form-floating" id="year">
-                            <input type="tel" maxlength="4" placeholder="Year" class="form-control" v-model="year" />
+                            <input type="tel" maxlength="4" placeholder="Year"
+                                v-bind:class="{ 'form-control': true, 'is-invalid': formValidity.date }"
+                                v-model="year" />
                             <label for="year">Year</label>
                         </div>
                     </div>
@@ -78,21 +88,39 @@
 export default {
     data() {
         return {
-            name: undefined,
-            surname: undefined,
-            email: undefined,
-            password: undefined,
+            name: '',
+            surname: '',
+            email: '',
+            password: '',
             day: undefined,
             month: 'Month',
             year: undefined,
-            months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+            months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+            formValidity: {
+                name: false,
+                surname: false,
+                email: false,
+                password: false,
+                date: false,
+            }
         }
     },
     methods: {
         async formSubmit(e: { preventDefault: () => void; }) {
             e.preventDefault();
-            const send_date: Number = Date.parse(`${this.day} ${this.month} ${this.year}`);
+            const isValidEmail = this.isValidEmail(this.email);
+            const isValidPassword = this.isValidPassword(this.password);
+            const isValidName = this.isValidName(this.name);
+            const isValidSurname = this.isValidSurname(this.surname);
 
+            const send_date: number = Date.parse(`${this.day} ${this.month} ${this.year}`);
+            if (isNaN(send_date)) {
+                this.formValidity.date = true;
+            }
+
+            if(isValidEmail || isValidPassword || isValidName || isValidSurname || this.formValidity.date) return
+
+            console.log("passed");
             try {
                 const new_user = await fetch('https://localhost:8000/', {
                     method: 'POST', body: JSON.stringify({
@@ -108,7 +136,31 @@ export default {
                 console.log("handle error")
             }
 
-        }
+        },
+
+        isValidEmail(email: string) {
+            const regex_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            console.log(regex_email.test(email.toLowerCase()));
+            this.formValidity.email = !regex_email.test(email.toLowerCase());
+            console.log(this.formValidity.email);
+            return this.formValidity.email;
+        },
+
+        isValidPassword(password: string) {
+            this.formValidity.password = password.length <= 8;
+            return this.formValidity.password;
+        },
+
+        isValidName(name: string) {
+            this.formValidity.name = name.length <= 0;
+            return this.formValidity.name;
+        },
+
+        isValidSurname(surname: string) {
+            this.formValidity.surname = surname.length <= 0;
+            return this.formValidity.surname;
+        },
+
     }
 }
 </script>
