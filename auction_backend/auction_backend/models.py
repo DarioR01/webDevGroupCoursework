@@ -5,7 +5,7 @@ class User(models.Model):
     email           = models.EmailField(max_length=254, editable=True)
     name            = models.CharField(max_length=30, editable=True)
     surname         = models.CharField(max_length=30, editable=True)
-    image           = models.ImageField(upload_to='./uploads', editable=True)
+    image           = models.ImageField(upload_to='./uploads', default='./uploads/profile_pic_default.jpg', editable=True)
     date_of_birth   = models.DateField(default=datetime.date.today, editable=True)
     password        = models.CharField(max_length=50, editable=True)
 
