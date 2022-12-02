@@ -118,11 +118,11 @@ export default {
                 this.formValidity.date = true;
             }
 
-            if(isValidEmail || isValidPassword || isValidName || isValidSurname || this.formValidity.date) return
+            if (isValidEmail || isValidPassword || isValidName || isValidSurname || this.formValidity.date) return
 
             console.log("passed");
             try {
-                const new_user = await fetch('https://localhost:8000/', {
+                const new_user = await fetch('http://127.0.0.1:8000/register/', {
                     method: 'POST', body: JSON.stringify({
                         name: this.name,
                         surname: this.surname,
@@ -133,7 +133,7 @@ export default {
                 });
                 location.replace('/login')
             } catch (e) {
-                console.log("handle error")
+                console.log(e)
             }
 
         },
