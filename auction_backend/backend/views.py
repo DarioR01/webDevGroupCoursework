@@ -46,3 +46,24 @@ def register(request):
         # not sure what is throwing this
         
         return JsonResponse(user.id, safe=False)
+
+@csrf_exempt 
+def login(request):
+    if request.method == 'POST':
+        data = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+        email         = data.email
+        password      = data.password
+
+        is_authenticated = authenticate_user(email, password)   
+
+        if is_authenticated:     
+            user = User.objects.filter(email = email).get()
+            return JsonResponse(user.id, safe=False)
+
+
+def authenticate_user(email, password):
+    user = authenticate(username=email, password=password)
+    if user is not None:
+        return True
+    return False
