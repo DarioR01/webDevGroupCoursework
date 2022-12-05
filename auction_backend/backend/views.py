@@ -1,53 +1,50 @@
-from typing import List, Dict
 import json
+
+from typing import List, Dict
 from types import SimpleNamespace
-from django.http import HttpResponse, HttpRequest, JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+
+from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseBadRequest
+from django.core.exceptions import BadRequest
 
 from backend.models import User
-from django.contrib.auth.models import User as Django_User
+
+from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 
-def create_user(user):
-    username: str = user.email
-    email: str = user.email
-    password: str = user.password
 
-    new_user = Django_User.objects.create_user(username, email, password)
-    new_user.save()
+def is_email_taken(email):
+    try: 
+        user = User.objects.filter(email = email).get()
+        if user: 
+            # a user exist, this email is taken
+            return True 
+    except: 
+        return False
 
-
+@csrf_exempt 
 def register(request):
     if request.method == 'POST':
-        data = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+        data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
-        user: Dict[str, str]= User.objects.create(
-            email         = data.email,
-            name          = data.name,
-            surname       = data.surname,
-            # date_of_birth = data.date_of_birth,
-            password      = data.password,
-
-        )
-
-        user.save()
-
-        user = User.objects.get(pk = user.id)
+        if is_email_taken(data.email):
+            return JsonResponse("Username already exist", safe=False)
 
         try:
-            user.image = data.image
+            user: Dict[str, str]= User.objects.create(
+                email         = data.email,
+                name          = data.name,
+                surname       = data.surname,
+                date_of_birth = data.date_of_birth,
+                password      = data.password,
+            )
             user.save()
-        except: pass
+            return JsonResponse(user.id, safe=False)
 
-        create_user(user)
+        except:
+            return HttpResponseBadRequest("A new account could not be created. Check that all fields are correct")
+    
 
-        # TODO: there is a bug when returning new_user.to_dict(). Even when image field is removed from 
-        # to_dict() in models, it still outputs Object of type ImageFieldFile is not JSON serializable
-        # not sure what is throwing this
-        
-        return JsonResponse(user.id, safe=False)
-
-
+@csrf_exempt 
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
