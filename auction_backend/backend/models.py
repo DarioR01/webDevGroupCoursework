@@ -41,7 +41,7 @@ class User(AbstractUser):
     email           = models.EmailField(max_length=254, unique=True, editable=True)
     name            = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
     surname         = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
-    image           = models.ImageField(upload_to='profile_pic', default='default.jpg', editable=True)
+    # image           = models.ImageField(upload_to='profile_pic', default='default.jpg', editable=True)
     date_of_birth   = models.DateField(default=datetime.date.today, editable=True)
 
     USERNAME_FIELD = 'email'
@@ -59,7 +59,6 @@ class User(AbstractUser):
             'email'         : self.email,
             'name'          : self.name,
             'surname'       : self.surname,
-            'image'         : self.image,
+            # 'image'         : self.image,
             'date_of_birth' : self.date_of_birth,
-            'password'      : self.password,
         }
