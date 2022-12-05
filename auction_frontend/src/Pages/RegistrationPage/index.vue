@@ -106,7 +106,7 @@ export default {
         }
     },
     methods: {
-        async formSubmit(e: { preventDefault: () => void; }) {
+        async formSubmit(e: { preventDefault: () => void; }): Promise<void> {
             e.preventDefault();
             const isValidEmail = this.isValidEmail(this.email);
             const isValidPassword = this.isValidPassword(this.password);
@@ -120,7 +120,6 @@ export default {
 
             if (isValidEmail || isValidPassword || isValidName || isValidSurname || this.formValidity.date) return
 
-            console.log("passed");
             try {
                 const new_user = await fetch('http://127.0.0.1:8000/register/', {
                     method: 'POST', body: JSON.stringify({
@@ -131,32 +130,30 @@ export default {
                         date_of_birth: send_date,
                     })
                 });
-                location.replace('/login')
-            } catch (e) {
-                console.log(e)
+                window.location.href = '/login';
+            } catch (error) {
+                console.log(error)
             }
 
         },
 
-        isValidEmail(email: string) {
+        isValidEmail(email: string):boolean {
             const regex_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-            console.log(regex_email.test(email.toLowerCase()));
             this.formValidity.email = !regex_email.test(email.toLowerCase());
-            console.log(this.formValidity.email);
             return this.formValidity.email;
         },
 
-        isValidPassword(password: string) {
+        isValidPassword(password: string):boolean {
             this.formValidity.password = password.length <= 8;
             return this.formValidity.password;
         },
 
-        isValidName(name: string) {
+        isValidName(name: string):boolean {
             this.formValidity.name = name.length <= 0;
             return this.formValidity.name;
         },
 
-        isValidSurname(surname: string) {
+        isValidSurname(surname: string):boolean {
             this.formValidity.surname = surname.length <= 0;
             return this.formValidity.surname;
         },
