@@ -1,3 +1,4 @@
+from typing import List, Dict
 import json
 from types import SimpleNamespace
 from django.http import HttpResponse, HttpRequest, JsonResponse
@@ -8,20 +9,19 @@ from django.contrib.auth.models import User as Django_User
 from django.contrib.auth import authenticate
 
 def create_user(user):
-    username = user.email
-    email = user.email
-    password = user.password
+    username: str = user.email
+    email: str = user.email
+    password: str = user.password
 
     new_user = Django_User.objects.create_user(username, email, password)
     new_user.save()
 
 
-@csrf_exempt 
 def register(request):
     if request.method == 'POST':
         data = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
-        user = User.objects.create(
+        user: Dict[str, str]= User.objects.create(
             email         = data.email,
             name          = data.name,
             surname       = data.surname,
@@ -47,7 +47,7 @@ def register(request):
         
         return JsonResponse(user.id, safe=False)
 
-@csrf_exempt 
+
 def login(request):
     if request.method == 'POST':
         data = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
@@ -61,9 +61,12 @@ def login(request):
             user = User.objects.filter(email = email).get()
             return JsonResponse(user.id, safe=False)
 
+        ## TODO implement better error handling
+        return JsonResponse("not authenticated", safe=False)
+
 
 def authenticate_user(email, password):
-    user = authenticate(username=email, password=password)
+    user = authenticate(email=email, password=password)
     if user is not None:
         return True
     return False
