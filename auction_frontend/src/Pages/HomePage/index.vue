@@ -7,31 +7,31 @@ import Item from '../../components/Item/index.vue'
   <div class="container-xxl">
     <ul class="row row-cols-auto g-5 justify-content-md-center">
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="1" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="2" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="3" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="4" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="5" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="6" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
       <li class="col list-unstyled">
-        <Item title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
+        <Item id="7" title="Gold" description="A bar of gold worth a lot" :price=16 :time=1668826865000
           image="https://picsum.photos/200/300" endTime="Date in epoch" />
       </li>
     </ul>
