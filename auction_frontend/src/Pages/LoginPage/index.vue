@@ -3,24 +3,35 @@
 
 
     <div class="container mt-5">
-    <div class="row d-flex justify-content-center">
-        <h1 class="mt-5 row d-flex justify-content-center">To proceed you must Login first</h1>
-        <div class="col-md-6">
-            <div class="card px-5 py-5" id="form1">
-                <div class="form-data" v-if="!submitted">
-                    <div class="details-inputs mb-5"> <span>Email</span> <input autocomplete="off" type="text" v-model="email" v-bind:class="{'form-control':true, 'is-invalid' : !validEmail(email) && BlurEmail}" v-on:blur="BlurEmail = true">
-                        <div class="invalid-feedback">Email is a mandatory field!</div>
-                    </div>
-                    <div class="details-inputs mb-5"> <span>Password</span> <input autocomplete="off" type="password" v-model="password" v-bind:class="{'form-control':true, 'is-invalid' : !validPassword(password) && BlurPassword}" v-on:blur="BlurPassword = true">
-                        <div class="invalid-feedback">Password must contain at least 9 character!</div>
-                    </div>
-                    <div class="mb-5"> <button class="btn-dark btn  w-100">Login</button></div>
-                </div>
+        <div class="row d-flex justify-content-center">
+            <h1 class="mt-5 row d-flex justify-content-center">To proceed you must Login first</h1>
+            <form @submit="submitedForm" class="row d-flex justify-content-center">
+                <div class="col-md-6">
+                    <div class="card px-5 py-5" id="login">
+                        <div class="form-data" v-if="!submitted">
 
-            </div>
+                            <div class="details-inputs mb-5"> <span>Email</span>
+                                <input type="email" v-model="email" v-bind:class="{
+                                    'form-control': true, 'is-invalid': formValidity.email
+                                }" v-on:blur="validEmail(email);" id="email" placeholder="email">
+
+                                <div class="invalid-feedback">Email is a mandatory field!</div>
+                            </div>
+                            <div class="details-inputs mb-5"> <span>Password</span>
+                                <input type="password"
+                                    v-bind:class="{ 'form-control': true, 'is-invalid': formValidity.password }"
+                                    v-on:blur="(validPassword(password))" id="password" placeholder="password"
+                                    v-model="password">
+                                <div class="invalid-feedback">Password must contain at least 9 character!</div>
+                            </div>
+                            <div class="mb-5"> <button class="btn-dark btn  w-100" type="submit">Login</button></div>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
-</div>
 
 
 </template>
@@ -29,9 +40,11 @@
 body {
     background: #000
 }
-h1{
-    color:#6B915B
+
+h1 {
+    color: #6B915B
 }
+
 .container {
     border: 2px solid #2C2C2C;
 
@@ -74,49 +87,94 @@ h1 {
 .btn {
     height: 50px
 }
-
-
 </style>
 
 <script lang="ts">
 export default {
-    el: '#form1',
+    el: '#login',
     data: function () {
         return {
             email: "",
-            valid: false,
             submitted: false,
             password: "",
-            BlurEmail: false,
-            BlurPassword: false
+            token: null,
+            formValidity: {
+
+                email: false,
+                password: false,
+
+            }
         }
     },
 
     methods: {
 
-        validate: function () {
+        
+        async submitedForm(e: { preventDefault: () => void; }) {
             
-            this.BlurPassword = true;
-            
-            if (this.validEmail(this.email) && this.validPassword(this.password)) {
-                this.valid = true;
+            e.preventDefault();
+            const validatedEmail = this.validEmail(this.email);
+            const validatedPassword = this.validPassword(this.password);
+
+            // if (validatedEmail || validatedPassword) return
+            console.log(validatedPassword)
+
+
+
+            console.log("credentials work");
+            try {
+                const new_login = await fetch('http://127.0.0.1:8000/login/', {
+                    method: 'GET',
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest',
+
+                    },
+                    body: JSON.stringify({
+                        email: this.email,
+                        password: this.password,
+                    })
+                    
+                })
+             
+                    .then(response => {
+                        this.token = response.data.token;
+                        console.log(this.token);
+                        localStorage.setItem("user-token", response.data.token)
+
+                    })
+                  
+                    
+
+
+            } catch (e) {
+                console.log("error occured", e)
             }
+
         },
 
-        validEmail: function (email:any) {
+        validEmail: function (email: string) {
 
-            var regex_email = /^(?=.*[0-9])(?=.*[a-zA-Z])([a-zA-Z0-9!?@#$%^&*()_]+){8,20}$"/;
-            if (regex_email.test(email.toLowerCase())) {
-                return true;
-            }
+            var regex_email = /^[_a-z0-9-+]+(\.[_a-z0-9-+]+)*(\+[a-z0-9-]+)?@[a-z0-9-.]+(\.[a-z0-9]+)$/;
+            this.formValidity.email = !regex_email.test(email.toLowerCase());
+            console.log(this.formValidity.email);
+            return this.formValidity.email;
 
         },
 
-        validPassword: function (password: any) {
+        validPassword: function (password: string) {
             if (password.length > 8) {
                 return true;
-            }
+            
+            this.formValidity.password = password.length <= 8;
+            return this.formValidity.password;
+        }
         },
+
+
+
+
 
     }
 }
