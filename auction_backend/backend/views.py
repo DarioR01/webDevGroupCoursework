@@ -13,6 +13,8 @@ from backend.models import User
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
 
+from rest_framework.authtoken.models import Token
+
 
 def is_email_taken(email: str):
     try: 
@@ -34,9 +36,9 @@ def register(request: HttpRequest):
         try:
             user: Dict[str, str]= User.objects.create(
                 email         = data.email,
-                # name          = data.name,
-                # surname       = data.surname,
-                # date_of_birth = data.date_of_birth,
+                #name          = data.name,
+                #surname       = data.surname,
+                #date_of_birth = data.date_of_birth,
             )
             user.set_password(data.password)
             user.save()
@@ -57,7 +59,11 @@ def login(request: HttpRequest):
         is_user: User = is_user_authenticated(email, password)
 
         if is_user:
-            return JsonResponse(is_user, safe=False)
+            is_user.auth_token.delete() #This is temporary, until we have a proper logout
+            user_name: str = is_user.to_dict().get("name") 
+            user_surname: str  = is_user.to_dict().get("surname")
+            token:Token = Token.objects.create(user= is_user) # Generates Token given a use. 
+            return JsonResponse({"token": token.key, "name": user_name, "surname": user_surname}, safe=False)
 
         return HttpResponseBadRequest("Could not authenticate. Check that credentials are correct")
 
@@ -65,5 +71,5 @@ def login(request: HttpRequest):
 def is_user_authenticated(email, password):
     user: User = authenticate(email=email, password=password)
     if user is not None:
-        return user.to_dict() # a user with those credentials exists
+        return user # a user with those credentials exists and user object is returned
     return False

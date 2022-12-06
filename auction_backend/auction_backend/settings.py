@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     'backend.apps.BackendConfig',
     'corsheaders',
+    'rest_framework.authtoken',
 ]
 
 AUTH_USER_MODEL = 'backend.User'

@@ -130,9 +130,8 @@ export default {
 
                 let data = await response.json();
 
-                console.log(data) // We are not getting ay token yet.
-
-                // localStorage.setItem("django-token", data.token)
+                localStorage.setItem("django-token", data.token)
+                localStorage.setItem("user_name", `${data.name} ${data.surname}`)
 
             } catch (e) {
                 console.log("error occured", e)
