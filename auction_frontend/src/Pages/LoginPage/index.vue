@@ -97,12 +97,9 @@ export default {
             email: "",
             submitted: false,
             password: "",
-            token: null,
             formValidity: {
-
                 email: false,
                 password: false,
-
             }
         }
     },
@@ -116,37 +113,26 @@ export default {
             const validatedEmail = this.validEmail(this.email);
             const validatedPassword = this.validPassword(this.password);
 
-            // if (validatedEmail || validatedPassword) return
+            console.log(validatedEmail)
             console.log(validatedPassword)
-
-
+            if (validatedEmail || validatedPassword) return
 
             console.log("credentials work");
             try {
-                const new_login = await fetch('http://127.0.0.1:8000/login/', {
-                    method: 'GET',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest',
-
-                    },
+                const response = await fetch('http://127.0.0.1:8000/login/', {
+                    method: 'POST',
                     body: JSON.stringify({
                         email: this.email,
                         password: this.password,
                     })
                     
                 })
-             
-                    .then(response => {
-                        this.token = response.data.token;
-                        console.log(this.token);
-                        localStorage.setItem("user-token", response.data.token)
 
-                    })
-                  
-                    
+                let data = await response.json();
 
+                console.log(data) // We are not getting ay token yet.
+
+                // localStorage.setItem("django-token", data.token)
 
             } catch (e) {
                 console.log("error occured", e)
@@ -163,15 +149,10 @@ export default {
 
         },
 
-        validPassword: function (password: string) {
-            if (password.length > 8) {
-                return true;
-            
+        validPassword(password: string):boolean {
             this.formValidity.password = password.length <= 8;
             return this.formValidity.password;
-        }
         },
-
 
 
 

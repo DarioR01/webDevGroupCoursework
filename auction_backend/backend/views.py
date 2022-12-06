@@ -48,7 +48,7 @@ def register(request: HttpRequest):
 
 @csrf_exempt 
 def login(request: HttpRequest):
-    if request.method == 'GET':
+    if request.method == 'POST':
         data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
         email:str         = data.email
