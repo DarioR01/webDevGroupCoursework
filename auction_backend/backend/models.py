@@ -53,3 +53,50 @@ class User(AbstractUser):
             'date_of_birth' : self.date_of_birth,
             'password'      : self.password,
         }
+
+class Questions(models.Model):
+    question = models.CharField(max_length=144, editable=True)
+    answer = models.CharField(max_length=30, editable=True)
+    owner = models.ForeignKey('backend.User',related_name='owner_set_question', on_delete=models.CASCADE)
+    user = models.ForeignKey('backend.User', related_name='user_set', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'{self.id}, {self.owner}, {self.user}'
+
+    
+    def to_dict(self):
+        return {
+            'id'         : self.id,
+            'question'   : self.question,
+            'answer'     : self.answer,
+            'owner'      : self.owner,
+            'user'       : self.user
+        }
+        
+class Item(models.Model):
+    title = models.CharField(max_length=30, editable=True)
+    description = models.CharField(max_length=144, editable=True)
+    price = models.IntegerField(editable=True)
+    #picture = models.ImageField(upload_to='./item_uploads', editable=True)
+    finalDate   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
+    highestBidder = models.ForeignKey('backend.User', related_name='highest_bidder_set', on_delete=models.CASCADE)
+    owner = models.ForeignKey('backend.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
+    question_id_array = models.ForeignKey('backend.Questions', related_name='question_ID_set', on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return f'{self.id}, {self.highestBidder}, {self.owner}'
+
+    
+    def to_dict(self):
+        return {
+            'id'                : self.id,
+            'title'             : self.title,
+            'description'       : self.description,
+            'price'             : self.price,
+           # 'picture'           : self.picture,
+            'finalDate'         : self.finalDate,
+            'highestBidder'     : self.highestBidder,
+            'owner'             : self.owner,
+            'question_id_array' : self.question_id_array
+        }
+        
