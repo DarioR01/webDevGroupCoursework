@@ -84,7 +84,7 @@ class Item(models.Model):
     question_id_array = models.ForeignKey('backend.Questions', related_name='question_ID_set', on_delete=models.CASCADE)
     
     def __str__(self):
-        return f'{self.id}, {self.highestBidder}, {self.owner}'
+        return f'{self.id}, {self.highest_bidder}, {self.owner}'
 
     
     def to_dict(self):
@@ -94,8 +94,8 @@ class Item(models.Model):
             'description'       : self.description,
             'price'             : self.price,
            # 'picture'           : self.picture,
-            'finalDate'         : self.final_date,
-            'highestBidder'     : self.highest_bidder,
+            'final_ate'         : self.final_date,
+            'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
             'question_id_array' : self.question_id_array
         }
