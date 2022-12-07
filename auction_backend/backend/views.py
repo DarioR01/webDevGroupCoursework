@@ -10,7 +10,14 @@ from backend.models import User
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 
-from utils import is_email_taken, get_auth_token, is_user_authenticated
+def is_email_taken(email: str):
+    try: 
+        user : User = get_user(email)
+        if user: 
+            # a user exist, this email is taken
+            return True 
+    except: 
+        return False
 
 @csrf_exempt 
 def register(request: HttpRequest):
@@ -33,6 +40,15 @@ def register(request: HttpRequest):
 
         except:
             return HttpResponseBadRequest({"A new account could not be created. Check that all fields are correct"}, safe=False)
+
+def get_user(email:str):
+    user: User = User.objects.filter(email=email).get()
+    return user
+
+def get_auth_token(email:str):
+    user: User = get_user(email)
+    token = Token.objects.filter(user=user).get()
+    return token
 
 
 @csrf_exempt 
@@ -66,3 +82,8 @@ def logout(request: HttpRequest):
 
         return HttpResponse({"Successfully logged out."}, safe=False)
 
+def is_user_authenticated(email, password):
+    user: User = authenticate(email=email, password=password)
+    if user is not None:
+        return user # a user with those credentials exists and user object is returned
+    return False
