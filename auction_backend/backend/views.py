@@ -34,9 +34,9 @@ def register(request: HttpRequest):
 
         try:
             user: Dict[str, str]= User.objects.create(
-                email         = data.email,
-                name          = data.name,
-                surname       = data.surname,
+                email = data.email,
+                name = data.name,
+                surname = data.surname,
                 #date_of_birth = data.date_of_birth,
             )
             user.set_password(data.password)
@@ -57,8 +57,8 @@ def login(request: HttpRequest):
     if request.method == 'POST':
         data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
-        email:str         = data.email
-        password:str      = data.password
+        email:str= data.email
+        password:str= data.password
 
         is_user: User = is_user_authenticated(email, password)
 
