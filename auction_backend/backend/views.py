@@ -5,12 +5,12 @@ from types import SimpleNamespace
 
 from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseBadRequest
 
-from backend.models import User
+from backend.models import User, Item
 
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.authtoken.models import Token
 
-from utils import is_email_taken, get_auth_token, is_user_authenticated
+from .utils import is_email_taken, get_auth_token, is_user_authenticated, get_item
 
 @csrf_exempt 
 def register(request: HttpRequest):

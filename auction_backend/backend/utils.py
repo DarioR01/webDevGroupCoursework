@@ -1,4 +1,4 @@
-from auction_backend.backend.models import User
+from backend.models import Item, User
 from rest_framework.authtoken.models import Token
 
 from django.contrib.auth import authenticate
@@ -6,6 +6,10 @@ from django.contrib.auth import authenticate
 def get_user(email:str):
     user: User = User.objects.filter(email=email).get()
     return user
+
+def get_item(id:int):
+    item: Item = Item.objects.filter(id=id).get()
+    return item
 
 def is_user_authenticated(email, password):
     user: User = authenticate(email=email, password=password)
