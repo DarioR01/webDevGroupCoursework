@@ -12,13 +12,11 @@ from backend.models import User
 
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import authenticate
-
 from rest_framework.authtoken.models import Token
-
 
 def is_email_taken(email: str):
     try: 
-        user = User.objects.filter(email = email).get()
+        user : User = User.objects.filter(email = email).get()
         if user: 
             # a user exist, this email is taken
             return True 
@@ -62,7 +60,8 @@ def login(request: HttpRequest):
             is_user.auth_token.delete() #This is temporary, until we have a proper logout
             user_name: str = is_user.to_dict().get("name") 
             user_surname: str  = is_user.to_dict().get("surname")
-            token:Token = Token.objects.create(user= is_user) # Generates Token given a use. 
+            token:Token = Token.objects.create(user= is_user) # Generates Token given a use.
+            print(type(token)) 
             return JsonResponse({"token": token.key, "name": user_name, "surname": user_surname}, safe=False)
 
         return HttpResponseBadRequest("Could not authenticate. Check that credentials are correct")
