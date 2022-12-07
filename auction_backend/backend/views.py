@@ -4,14 +4,10 @@ from typing import List, Dict
 from types import SimpleNamespace
 
 from django.http import HttpResponse, HttpRequest, JsonResponse, HttpResponseBadRequest
-from django.core.exceptions import BadRequest
-from django.shortcuts import get_object_or_404
 
-from backend.models import CustomUserManager
 from backend.models import User
 
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
 
 def is_email_taken(email: str):
