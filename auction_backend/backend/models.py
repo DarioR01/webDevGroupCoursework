@@ -78,8 +78,8 @@ class Item(models.Model):
     description = models.CharField(max_length=144, editable=True)
     price = models.IntegerField(editable=True)
     #picture = models.ImageField(upload_to='./item_uploads', editable=True)
-    finalDate   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
-    highestBidder = models.ForeignKey('backend.User', related_name='highest_bidder_set', on_delete=models.CASCADE)
+    final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
+    highest_bidder = models.ForeignKey('backend.User', related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('backend.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
     question_id_array = models.ForeignKey('backend.Questions', related_name='question_ID_set', on_delete=models.CASCADE)
     
@@ -94,8 +94,8 @@ class Item(models.Model):
             'description'       : self.description,
             'price'             : self.price,
            # 'picture'           : self.picture,
-            'finalDate'         : self.finalDate,
-            'highestBidder'     : self.highestBidder,
+            'finalDate'         : self.final_date,
+            'highestBidder'     : self.highest_bidder,
             'owner'             : self.owner,
             'question_id_array' : self.question_id_array
         }
