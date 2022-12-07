@@ -30,7 +30,7 @@ def register(request: HttpRequest):
         data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
         if is_email_taken(data.email):
-            return JsonResponse("Username already exist", safe=False)
+            return HttpResponseBadRequest({"Username already exist"}, safe=False)
 
         try:
             user: Dict[str, str]= User.objects.create(
@@ -44,7 +44,8 @@ def register(request: HttpRequest):
             return JsonResponse(user.id, safe=False)
 
         except:
-            return HttpResponseBadRequest("A new account could not be created. Check that all fields are correct")
+            return HttpResponseBadRequest({"A new account could not be created. Check that all fields are correct"}, safe=False)
+
 
 
 @csrf_exempt 
@@ -65,7 +66,10 @@ def login(request: HttpRequest):
             print(type(token)) 
             return JsonResponse({"token": token.key, "name": user_name, "surname": user_surname}, safe=False)
 
-        return HttpResponseBadRequest("Could not authenticate. Check that credentials are correct")
+
+        return HttpResponseBadRequest({"Could not authenticate. Check that credentials are correct"}, safe=False)
+
+
 
 
 def is_user_authenticated(email, password):
