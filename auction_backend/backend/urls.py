@@ -3,10 +3,11 @@
 
 from django.urls import path
 
-from backend.views import register, login
+from backend.views import register, login, logout
 
 app_name = 'rainfall_record'
 urlpatterns = [
     path('register/', register, name='register'),
     path('login/', login, name='login'),
+    path('logout/', logout, name='logout'),
 ]
