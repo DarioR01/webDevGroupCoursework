@@ -17,7 +17,7 @@ from django.conf import settings
 
 def is_email_taken(email: str):
     try: 
-        user : User = User.objects.filter(email = email).get()
+        user : User = get_user(email)
         if user: 
             # a user exist, this email is taken
             return True 
@@ -45,6 +45,10 @@ def register(request: HttpRequest):
 
         except:
             return HttpResponseBadRequest({"A new account could not be created. Check that all fields are correct"}, safe=False)
+
+def get_user(email:str):
+    user: User = User.objects.filter(email=email).get()
+    return user
 
 
 
