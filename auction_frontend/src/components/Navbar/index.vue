@@ -19,11 +19,42 @@ import { RouterView, RouterLink } from 'vue-router'
             <router-link :to="{ name: 'Profile' }" class="nav-link" aria-current="profile">Profile</router-link>
           </li>
         </ul>
-        <form class="d-flex" role="search">
-          <button class="btn btn-outline-success" type="submit">Login</button>
-        </form>
+        <button class="btn btn-outline-success" type="button" v-on:click="logout">Login</button>
       </div>
     </div>
   </nav>
   <router-view />
 </template>
+
+<script lang="ts">
+export default {
+  methods: {
+    async logout() {
+      const csrftoken = this.getCookie("csrftoken");
+      const response = await fetch('http://localhost:8000/logout/', {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken },
+        credentials: "include",
+        mode: "cors",
+        referrerPolicy: "no-referrer",
+      });
+      console.log(response);
+    },
+
+    getCookie(name: string) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  }
+}
+</script>

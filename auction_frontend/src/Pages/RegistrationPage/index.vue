@@ -121,8 +121,14 @@ export default {
             if (isValidEmail || isValidPassword || isValidName || isValidSurname || this.formValidity.date) return
 
             try {
-                const new_user = await fetch('http://127.0.0.1:8000/register/', {
-                    method: 'POST', body: JSON.stringify({
+                const csrftoken = this.getCookie("csrftoken");
+                const new_user = await fetch('http://localhost:8000/registration/', {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrftoken },
+                    credentials: "include",
+                    mode: "cors",
+                    referrerPolicy: "no-referrer",
+                    body: JSON.stringify({
                         name: this.name,
                         surname: this.surname,
                         email: this.email,
@@ -135,6 +141,21 @@ export default {
                 console.log(error)
             }
 
+        },
+
+        getCookie(name: string) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+            }
+        }
+        return cookieValue;
         },
 
         isValidEmail(email: string):boolean {
