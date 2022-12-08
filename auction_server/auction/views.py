@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, Http404, HttpResponse
+from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse
 from django.contrib.auth import authenticate, login, logout
 from .forms import UserRegistration, UserLogin
 from typing import Dict
@@ -7,26 +7,26 @@ from datetime import datetime
 
 from .models import User
 
-def user_login(request):
+def user_login(request: HttpRequest):
     if request.method == 'POST':
-        form = UserLogin(request.POST)
+        form: UserLogin = UserLogin(request.POST)
         if form.is_valid():
             email:str = form.cleaned_data['email']
             password:str = form.cleaned_data['password']
 
-            user = authenticate(email=email, password=password)
+            user: User = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
                 return HttpResponseRedirect('http://localhost:5173/')
             return Http404()
     else:
-        form = UserLogin()
+        form : UserLogin = UserLogin()
 
     return render(request, 'auth/login.html', {'form': form})
 
-def registration(request):
+def registration(request: HttpRequest):
     if request.method == 'POST':
-        form = UserRegistration(request.POST)
+        form: UserRegistration = UserRegistration(request.POST)
         if form.is_valid():
             name:str = form.cleaned_data['name']
             surname:str = form.cleaned_data['surname']
@@ -44,11 +44,11 @@ def registration(request):
             user.save()
             return HttpResponseRedirect('/login/')
     else:
-        form = UserRegistration()
+        form: UserRegistration = UserRegistration()
 
     return render(request, 'auth/registration.html', {'form': form})
 
-def user_logout(request):
+def user_logout(request: HttpRequest):
     if request.method == 'POST':
         print("Ok")
         logout(request)
