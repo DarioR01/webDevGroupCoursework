@@ -9,7 +9,7 @@ from typing import Dict
 from datetime import datetime
 from .utils import *
 
-from .models import User, Item
+from .models import User, Item, Question
 
 def user_login(request: HttpRequest):
     if request.method == 'POST':
@@ -59,6 +59,8 @@ def user_logout(request: HttpRequest):
         return HttpResponse()
     return Http404()
 
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 def item_page(request: HttpRequest, item_id:int):
     if request.method == 'GET':
         try:
@@ -66,27 +68,26 @@ def item_page(request: HttpRequest, item_id:int):
         except: 
             return HttpResponseBadRequest("No item found")
 
-        
-        owner: User = get_user(item.owner.id)
-        owner = owner.to_dict()
+        body = build_get_item_body(item)
+        return JsonResponse(body)
 
-        # if there is a bidder, get details of highest bidder
-        highest_bidder: User
+    if request.method == 'PUT':
         try:
-            highest_bidder= get_user(item.highest_bidder.id)
-            highest_bidder = highest_bidder.to_dict()
+            item: Item = get_item(item_id)
         except: 
-            highest_bidder = {}
+            return HttpResponseBadRequest("No item found")
+
+        #TODO agree on what this fucntion is supposed to receive in the request
+        
+        #find the user corresponding to the highest bidder
+
+        #update the highest bidder in the item with the highest bidder found above
+
+        #return updated item using build_get_item_body()
+
+        return HttpResponse("You got to this endpoint")
 
 
-        # construct payload object with info about item, bidderm owner
-        payload : Dict[str][any] = {
-            "id": item.id,
-            "title": item.title,
-            "description": item.description,
-            "price": item.price,
-            "highest_bidder": highest_bidder,
-            "owner": owner
-        }
 
-        return JsonResponse(payload)
+    
+
