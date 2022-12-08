@@ -144,37 +144,37 @@ export default {
         },
 
         getCookie(name: string) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
             }
-            }
-        }
-        return cookieValue;
+            return cookieValue;
         },
 
-        isValidEmail(email: string):boolean {
+        isValidEmail(email: string): boolean {
             const regex_email = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
             this.formValidity.email = !regex_email.test(email.toLowerCase());
             return this.formValidity.email;
         },
 
-        isValidPassword(password: string):boolean {
+        isValidPassword(password: string): boolean {
             this.formValidity.password = password.length <= 8;
             return this.formValidity.password;
         },
 
-        isValidName(name: string):boolean {
+        isValidName(name: string): boolean {
             this.formValidity.name = name.length <= 0;
             return this.formValidity.name;
         },
 
-        isValidSurname(surname: string):boolean {
+        isValidSurname(surname: string): boolean {
             this.formValidity.surname = surname.length <= 0;
             return this.formValidity.surname;
         },
