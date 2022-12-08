@@ -56,9 +56,11 @@ class User(AbstractUser):
 
 class Question(models.Model):
     question = models.CharField(max_length=144, editable=True)
-    answer = models.CharField(max_length=30, editable=True)
+    answer = models.CharField(max_length=30, null=True, editable=True)
     owner = models.ForeignKey('auction.User',related_name='owner_set_question', on_delete=models.CASCADE)
     user = models.ForeignKey('auction.User', related_name='user_set', on_delete=models.CASCADE)
+    item = models.ForeignKey('auction.Item', related_name='item_set', on_delete=models.CASCADE)
+
     
     def __str__(self):
         return f'{self.id}, {self.owner}, {self.user}'
@@ -70,7 +72,8 @@ class Question(models.Model):
             'question'   : self.question,
             'answer'     : self.answer,
             'owner'      : self.owner,
-            'user'       : self.user
+            'user'       : self.user,
+            'item'       : self.item
         }
         
 class Item(models.Model):
@@ -81,7 +84,6 @@ class Item(models.Model):
     #final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
     highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('auction.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
-    question_id_array = models.ForeignKey('auction.Question', null=True, related_name='question_ID_set', on_delete=models.CASCADE)
     
     def __str__(self):
         return f'{self.id}, {self.highest_bidder}, {self.owner}'
@@ -97,7 +99,6 @@ class Item(models.Model):
             #'final_date'         : self.final_date,
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
-            'question_id_array' : self.question_id_array
         }
         
 
