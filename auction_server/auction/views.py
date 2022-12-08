@@ -1,11 +1,15 @@
-from django.shortcuts import render
-from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse
+from types import SimpleNamespace
+from django.shortcuts import render, get_object_or_404
+from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
+
+import json
 from .forms import UserRegistration, UserLogin
 from typing import Dict
 from datetime import datetime
+from .utils import *
 
-from .models import User
+from .models import User, Item
 
 def user_login(request: HttpRequest):
     if request.method == 'POST':
@@ -54,3 +58,35 @@ def user_logout(request: HttpRequest):
         logout(request)
         return HttpResponse()
     return Http404()
+
+def item_page(request: HttpRequest, item_id:int):
+    if request.method == 'GET':
+        try:
+            item: Item = get_item(item_id)
+        except: 
+            return HttpResponseBadRequest("No item found")
+
+        
+        owner: User = get_user(item.owner.id)
+        owner = owner.to_dict()
+
+        # if there is a bidder, get details of highest bidder
+        highest_bidder: User
+        try:
+            highest_bidder= get_user(item.highest_bidder.id)
+            highest_bidder = highest_bidder.to_dict()
+        except: 
+            highest_bidder = {}
+
+
+        # construct payload object with info about item, bidderm owner
+        payload : Dict[str][any] = {
+            "id": item.id,
+            "title": item.title,
+            "description": item.description,
+            "price": item.price,
+            "highest_bidder": highest_bidder,
+            "owner": owner
+        }
+
+        return JsonResponse(payload)
