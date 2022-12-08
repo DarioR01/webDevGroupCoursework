@@ -21,7 +21,9 @@ def user_login(request: HttpRequest):
             user: User = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                return HttpResponseRedirect('http://localhost:5173/')
+                response = HttpResponseRedirect('http://localhost:5173/')
+                response.set_cookie('login', 'true') 
+                return response
             return Http404()
     else:
         form : UserLogin = UserLogin()
@@ -54,9 +56,10 @@ def registration(request: HttpRequest):
 
 def user_logout(request: HttpRequest):
     if request.method == 'POST':
-        print("Ok")
         logout(request)
-        return HttpResponse()
+        response= HttpResponse()
+        response.delete_cookie('login')
+        return response
     return Http404()
 
 def item_page(request: HttpRequest, item_id:int):
