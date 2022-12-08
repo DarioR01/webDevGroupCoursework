@@ -54,7 +54,7 @@ class User(AbstractUser):
             'password'      : self.password,
         }
 
-class Questions(models.Model):
+class Question(models.Model):
     question = models.CharField(max_length=144, editable=True)
     answer = models.CharField(max_length=30, editable=True)
     owner = models.ForeignKey('auction.User',related_name='owner_set_question', on_delete=models.CASCADE)
@@ -78,10 +78,10 @@ class Item(models.Model):
     description = models.CharField(max_length=144, editable=True)
     price = models.IntegerField(editable=True)
     #picture = models.ImageField(upload_to='./item_uploads', editable=True)
-    final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
-    highest_bidder = models.ForeignKey('auction.User', related_name='highest_bidder_set', on_delete=models.CASCADE)
+    #final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
+    highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('auction.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
-    question_id_array = models.ForeignKey('auction.Questions', related_name='question_ID_set', on_delete=models.CASCADE)
+    question_id_array = models.ForeignKey('auction.Question', null=True, related_name='question_ID_set', on_delete=models.CASCADE)
     
     def __str__(self):
         return f'{self.id}, {self.highest_bidder}, {self.owner}'
@@ -93,8 +93,8 @@ class Item(models.Model):
             'title'             : self.title,
             'description'       : self.description,
             'price'             : self.price,
-           # 'picture'           : self.picture,
-            'final_ate'         : self.final_date,
+            #'picture'           : self.picture,
+            #'final_date'         : self.final_date,
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
             'question_id_array' : self.question_id_array
