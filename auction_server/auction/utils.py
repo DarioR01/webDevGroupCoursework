@@ -33,6 +33,30 @@ def get_all_item():
 
     return items_serialised
 
+def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
+    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+    # get values from request to update item object
+    try: 
+        highest_bidder_id: int = data.highest_bidder_id
+        price: int = data.price
+    except:
+        return HttpResponseBadRequest("Could not update item. Check that the request contains the highest_bidder id and a price")
+    
+    #find the user corresponding to the highest bidder
+    try: 
+        highest_bidder = get_user(highest_bidder_id)
+    except:
+        return HttpResponseBadRequest("Could not bid on item. User bidding on item could not be accessed")
+
+    #update the highest bidder in the item with the highest bidder found above and the price
+    item.highest_bidder = highest_bidder
+    item.price = price
+    item.save()
+
+    serialised_item = serialise_item(item)
+    return serialised_item
+
 def post_question_for_item(request: HttpRequest, item: Item):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 

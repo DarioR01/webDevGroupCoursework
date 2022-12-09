@@ -74,36 +74,17 @@ def item_page(request: HttpRequest, item_id:int):
     except: 
         return HttpResponseBadRequest("No item found")
 
+    # get item for item page
     if request.method == 'GET':
         body = build_response_body_for_get_item(item)
         return JsonResponse(body)
 
+    # update item's highest bidder and new price
     if request.method == 'PUT':
-        #TODO agree on what this fucntion is supposed to receive in the request
-        #bidder, item, price
-        data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+        updated_item = update_item_highest_bidder_and_price(request, item)
+        return JsonResponse(updated_item)
 
-        # get values from request to update item object
-        try: 
-            highest_bidder_id: int = data.highest_bidder_id
-            price: int = data.price
-        except:
-            return HttpResponseBadRequest("Could not update item. Check that the request contains the highest_bidder id and a price")
-     
-        #find the user corresponding to the highest bidder
-        try: 
-            highest_bidder = get_user(highest_bidder_id)
-        except:
-            return HttpResponseBadRequest("Could not bid on item. User bidding on item could not be accessed")
-
-        #update the highest bidder in the item with the highest bidder found above
-        item.highest_bidder = highest_bidder
-        item.price = price
-        item.save()
-
-        serialised_item = serialise_item(item)
-        return JsonResponse(serialised_item)
-
+    # post a new question for an item
     if request.method == 'POST':
         post_question_for_item(request, item)
         return HttpResponse("Success. A new question was created")
