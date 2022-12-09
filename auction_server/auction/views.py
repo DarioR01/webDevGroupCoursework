@@ -95,30 +95,7 @@ def item_page(request: HttpRequest, item_id:int):
 
 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
-    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
-
-    # get values from request to update question object
-    try: 
-        answer: str = data.answer
-    except:
-        return HttpResponseBadRequest("Could not update question. Check that the request contains the answer")
-
-    #check that item passed in url is an item and can be retrieved
-    try:
-        item: Item = get_item(item_id)
-    except: 
-        return HttpResponseBadRequest("No item found")
-
-    #check that question passed in url is a question for that item and can be retrieved
-    try:
-        question: Question = get_question_for_item(item, question_id)
-    except:
-        return HttpResponseBadRequest("No question found")
- 
-    question.answer = answer
-    question.save()
-
-    serialised_question = serialise_question(question)
-    return JsonResponse(serialised_question)
+    updated_question = post_answer_for_question(request, item_id, question_id)
+    return JsonResponse(updated_question)
     
 
