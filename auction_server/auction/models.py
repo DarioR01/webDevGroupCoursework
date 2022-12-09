@@ -100,6 +100,13 @@ class Item(models.Model):
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
         }
+
+class Image(models.Model):
+    title = models.CharField(max_length=200)
+    image = models.ImageField(upload_to='auction/static')
+
+    def __str__(self):
+        return self.title
         
 
    

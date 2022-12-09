@@ -9,7 +9,7 @@ from typing import Dict
 from datetime import datetime
 from .utils import *
 
-from .models import User, Item, Question
+from .models import User, Item, Question, Image
 
 def user_login(request: HttpRequest):
     if request.method == 'POST':
@@ -97,5 +97,15 @@ def item_page(request: HttpRequest, item_id:int):
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
     updated_question = post_answer_for_question(request, item_id, question_id)
     return JsonResponse(updated_question)
-    
+
+def upload_image(request: HttpRequest):
+    if request.method == 'POST':
+        image = request.FILES.get("file")
+        image = Image.objects.create(
+                title = "The title",
+                image = image,
+            )
+        image.save()
+        return HttpResponse("Success. A new question was created")
+        
 

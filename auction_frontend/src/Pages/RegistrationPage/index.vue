@@ -121,7 +121,7 @@ export default {
             if (isValidEmail || isValidPassword || isValidName || isValidSurname || this.formValidity.date) return
 
             try {
-                const csrftoken = this.getCookie("csrftoken");
+                const csrftoken = getCookie("csrftoken");
                 const new_user = await fetch('http://localhost:8000/registration/', {
                     method: 'POST',
                     headers: { 'X-CSRFToken': csrftoken },

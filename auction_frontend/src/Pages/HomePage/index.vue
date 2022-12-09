@@ -23,14 +23,21 @@ import Item from '../../components/Item/index.vue'
 export default {
   data() {
     return {
-      items: [
-        { id: '1', title: 'Gold', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tristique dui ac urna tincidunt, sit amet efficitur nulla maximus. Integer a lacus at magna porttitor', price: 2000, time: 1745668367000, img: 'https://picsum.photos/200/300' },
-        { id: '2', title: 'Silver', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tristique dui ac urna tincidunt, sit amet efficitur nulla maximus. Integer a lacus at magna porttitor Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis tristique dui ac urna tincidunt, sit amet efficitur nulla maximus. Integer a lacus at magna porttitor', price: 1000, time: 1864403827000, img: 'https://picsum.photos/200/300' },
-        { id: '3', title: 'Incredible Toy', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', price: 30, time: 1787648469000, img: 'https://picsum.photos/200/300' },
-        { id: '4', title: 'Underwear', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit.', price: 12, time: 1685414230000, img: 'https://picsum.photos/200/300' },
-        { id: '5', title: 'Overwear', description: 'Lorem ipsum dolor sit amet.', price: 67, time: 1867158374000, img: 'https://picsum.photos/200/300' },
-        { id: '6', title: 'Youwear', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.', price: 1.56, time: 1781942194000, img: 'https://picsum.photos/200/300' }
-      ]
+      items: this.getItems()
+    }
+  },
+
+  methods: {
+    async getItems() {
+      const response = await fetch('http://localhost:8000/home/', {
+        method: 'GET',
+        credentials: "include",
+        mode: "cors",
+        referrerPolicy: "no-referrer",
+      });
+      const itemsObject = await response.json();
+      const items = Object.values(itemsObject);
+      this.items = items;
     }
   }
 }
