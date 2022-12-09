@@ -67,9 +67,8 @@ def home(request: HttpRequest):
         items = get_all_item()
         return JsonResponse(items)
 
-
 def item_page(request: HttpRequest, item_id:int):
-
+    #check that item passed in url is an item and can be retrieved
     try:
         item: Item = get_item(item_id)
     except: 
@@ -82,15 +81,28 @@ def item_page(request: HttpRequest, item_id:int):
     if request.method == 'PUT':
         #TODO agree on what this fucntion is supposed to receive in the request
         #bidder, item, price
-        
+        data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+        # get values from request to update item object
+        try: 
+            highest_bidder_id: int = data.highest_bidder_id
+            price: int = data.price
+        except:
+            return HttpResponseBadRequest("Could not update item. Check that the request contains the highest_bidder id and a price")
+     
         #find the user corresponding to the highest bidder
+        try: 
+            highest_bidder = get_user(highest_bidder_id)
+        except:
+            return HttpResponseBadRequest("Could not bid on item. User bidding on item could not be accessed")
 
         #update the highest bidder in the item with the highest bidder found above
+        item.highest_bidder = highest_bidder
+        item.price = price
+        item.save()
 
-        #return updated item using build_get_item_body()
-        #item id, price, highest bidder
-
-        return HttpResponse("You got to this endpoint")
+        serialised_item = serialise_item(item)
+        return JsonResponse(serialised_item)
 
     if request.method == 'POST':
         post_question_for_item(request, item)
