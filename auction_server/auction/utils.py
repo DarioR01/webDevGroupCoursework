@@ -14,19 +14,19 @@ def get_item(id:int):
     item: Item = Item.objects.filter(id=id).get()
     return item
 
-def get_question_for_item(id:int):
+def get_question_for_item(item:Item, question_id: int):
+    question: Question = Question.objects.filter(item = item, id = question_id).get()
+    return question
+
+def get_all_questions_for_item(id:int):
     item: Item = Item.objects.filter(id=id).get()
-
     questions: List = Question.objects.all().filter(item = item)
-
     return questions
 
 def get_all_item():
     items: List = Item.objects.all()
 
     items_serialised: Dict [any][any] = {}
-
-
     for item in items:
         serialised_item = serialise_item(item)
         items_serialised.update({item.id: serialised_item})
@@ -97,8 +97,8 @@ def serialise_item(item: Item):
     # if there is are questions for the item, get details of questions
     questions: List
     try:
-        questions = get_question_for_item(item.id)
-        serialised_quesitons = serialise_quesitons(questions)
+        questions = get_all_questions_for_item(item.id)
+        questions = build_questions_list(questions)
     except: 
         questions = {}
 
@@ -109,34 +109,39 @@ def serialise_item(item: Item):
         "price": item.price,
         "highest_bidder": highest_bidder,
         "owner": owner,
-        "questions": serialised_quesitons
+        "questions": questions
     }
     return serialised_item
 
-def serialise_quesitons(questions: List):
-    questions_serialised: Dict [any][any] = {}
-
+def serialise_question(question: Question):
     # each question has foreign key of user that posted and user that asked
     # item should not be returned as an object, because questions are retrieved as part of items, never alone
     # no need to return item within question when question is within item
+    owner: User = question.owner.to_dict()
+    user: User = question.user.to_dict()
+    item_id: int = question.item.id
+
+
+    question_object: Dict[str][any] = {
+        "id": question.id,
+        'question'   : question.question,
+        'answer'     : "",
+        'owner'      : owner,
+        'user'       : user,
+        'item_id'    : item_id
+    }
+    
+    # if there is an answer for a question, then it should be returned
+    if question.answer: 
+        question_object['answer'] = question.answer
+
+    return question_object
+
+
+def build_questions_list(questions: List):
+    questions_serialised: Dict [any][any] = {}
     for q in questions:
-        owner: User = q.owner.to_dict()
-        user: User = q.user.to_dict()
-        item_id: int = q.item.id
-
-
-        question: Dict[str][any] = {
-            "id": q.id,
-            'question'   : q.question,
-            'owner'      : owner,
-            'user'       : user,
-            'item_id'    : item_id
-        }
-        
-        # if there is an answer for a question, then it should be returned
-        if q.answer: 
-            question.update({"answer": q.answer})
-
+        question = serialise_question(q)
         questions_serialised.update({q.id: question})
 
     return questions_serialised

@@ -30,6 +30,7 @@ def user_login(request: HttpRequest):
 
     return render(request, 'auth/login.html', {'form': form})
 
+
 def registration(request: HttpRequest):
     if request.method == 'POST':
         form: UserRegistration = UserRegistration(request.POST)
@@ -54,6 +55,7 @@ def registration(request: HttpRequest):
 
     return render(request, 'auth/registration.html', {'form': form})
 
+
 def user_logout(request: HttpRequest):
     if request.method == 'POST':
         logout(request)
@@ -62,10 +64,12 @@ def user_logout(request: HttpRequest):
         return response
     return Http404()
 
+
 def home(request: HttpRequest):
     if request.method == 'GET':
         items = get_all_item()
         return JsonResponse(items)
+
 
 def item_page(request: HttpRequest, item_id:int):
     #check that item passed in url is an item and can be retrieved
@@ -90,5 +94,31 @@ def item_page(request: HttpRequest, item_id:int):
         return HttpResponse("Success. A new question was created")
 
 
+def question_answer(request: HttpRequest, item_id: int, question_id: int):
+    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+    # get values from request to update question object
+    try: 
+        answer: str = data.answer
+    except:
+        return HttpResponseBadRequest("Could not update question. Check that the request contains the answer")
+
+    #check that item passed in url is an item and can be retrieved
+    try:
+        item: Item = get_item(item_id)
+    except: 
+        return HttpResponseBadRequest("No item found")
+
+    #check that question passed in url is a question for that item and can be retrieved
+    try:
+        question: Question = get_question_for_item(item, question_id)
+    except:
+        return HttpResponseBadRequest("No question found")
+ 
+    question.answer = answer
+    question.save()
+
+    serialised_question = serialise_question(question)
+    return JsonResponse(serialised_question)
     
 
