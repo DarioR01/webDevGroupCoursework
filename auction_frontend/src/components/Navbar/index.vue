@@ -1,11 +1,12 @@
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router'
+console.log(document.cookie)
 </script>
 
 <template>
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Bidder</a>
+      <router-link class="navbar-brand" :to="{ name: 'Home' }">Bidder</router-link>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
         aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -19,7 +20,10 @@ import { RouterView, RouterLink } from 'vue-router'
             <router-link :to="{ name: 'Profile' }" class="nav-link" aria-current="profile">Profile</router-link>
           </li>
         </ul>
-        <button class="btn btn-outline-success" type="button" v-on:click="logout">Login</button>
+
+        <button v-if="(isLoggedIn !== null)" class="btn btn-outline-success" type="button"
+          v-on:click="logout">Logout</button>
+        <a v-else class="btn btn-outline-success" type="button" href="http://localhost:8000/login">Login</a>
       </div>
     </div>
   </nav>
@@ -28,8 +32,14 @@ import { RouterView, RouterLink } from 'vue-router'
 
 <script lang="ts">
 export default {
+  data() {
+    return {
+      isLoggedIn: this.getCookie('login')
+    }
+  },
   methods: {
-    async logout() {
+    async logout(e: { preventDefault: () => void; }) {
+      e.preventDefault();
       const csrftoken = this.getCookie("csrftoken");
       const response = await fetch('http://localhost:8000/logout/', {
         method: 'POST',
@@ -38,13 +48,14 @@ export default {
         mode: "cors",
         referrerPolicy: "no-referrer",
       });
-      console.log(response);
+      this.isLoggedIn = response.status === 200 ? null : this.isLoggedIn
     },
 
-    getCookie(name: string) {
+    getCookie(name: string): string | null {
       let cookieValue = null;
       if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
+        console.log(cookies)
         for (let i = 0; i < cookies.length; i++) {
           const cookie = cookies[i].trim();
           if (cookie.substring(0, name.length + 1) === (name + '=')) {
@@ -53,6 +64,7 @@ export default {
           }
         }
       }
+      console.log(cookieValue)
       return cookieValue;
     }
   }
