@@ -21,6 +21,18 @@ def get_question_for_item(id:int):
 
     return questions
 
+def get_all_item():
+    items: List = Item.objects.all()
+
+    items_serialised: Dict [any][any] = {}
+
+
+    for item in items:
+        serialised_item = serialise_item(item)
+        items_serialised.update({item.id: serialised_item})
+
+    return items_serialised
+
 def post_question_for_item(request: HttpRequest, item: Item):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 

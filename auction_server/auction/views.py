@@ -62,6 +62,11 @@ def user_logout(request: HttpRequest):
         return response
     return Http404()
 
+def home(request: HttpRequest):
+    if request.method == 'GET':
+        items = get_all_item()
+        return JsonResponse(items)
+
 
 def item_page(request: HttpRequest, item_id:int):
 
