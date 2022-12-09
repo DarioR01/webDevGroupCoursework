@@ -65,8 +65,6 @@ def item_page(request: HttpRequest, item_id:int):
     try:
         item: Item = get_item(item_id)
     except: 
-        except: 
-    except: 
         return HttpResponseBadRequest("No item found")
 
     if request.method == 'GET':
@@ -74,21 +72,44 @@ def item_page(request: HttpRequest, item_id:int):
         return JsonResponse(body)
 
     if request.method == 'PUT':
-        try:
-            item: Item = get_item(item_id)
-        except: 
-            return HttpResponseBadRequest("No item found")
-
         #TODO agree on what this fucntion is supposed to receive in the request
+        #bidder, item, price
         
         #find the user corresponding to the highest bidder
 
         #update the highest bidder in the item with the highest bidder found above
 
         #return updated item using build_get_item_body()
+        #item id, price, highest bidder
 
         return HttpResponse("You got to this endpoint")
 
+    if request.method == 'POST':
+        data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+        # get values from request to populate question object
+        try: 
+            question: str = data.question
+            user_id: int = data.user_id
+        except:
+            return HttpResponseBadRequest("Could not post question. Check that the request contains the question and the user_id asking the question")
+
+
+        # get values to create new question object
+
+        # owner must exist, because it's obtained from item and not request. Owner for item is checked on item's creation
+        owner_id: int = item.owner.id
+        owner: User = get_user(owner_id)
+
+        try: 
+            user: User = get_user(user_id)
+        except:
+            return HttpResponseBadRequest("Could not post question. User asking question could not be accessed")
+
+        # create question object
+        question: Question = create_new_question(question, owner, user, item)
+
+        return HttpResponse("Success. A new question was created")
 
 
     

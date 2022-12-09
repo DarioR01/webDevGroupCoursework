@@ -80,6 +80,19 @@ def build_response_body_for_get_item(item: Item):
     return serialised_item
    
 
+def create_new_question(question: str, owner: User, user: User, item: Item, answer: str = None):
+    question: Question = Question(
+        question = question,
+        answer = answer,
+        owner = owner,
+        user = user,
+        item = item            
+    )
+
+    question.save()
+
+    return question
+
 # b = Item(
 #                 title = "test item",
 #                 description = "this is a test item",
