@@ -1,7 +1,5 @@
-from typing import Dict
-from auction.models import Item, User
-
-from django.contrib.auth import authenticate
+from typing import Dict, List
+from auction.models import Item, User, Question
 
 def get_user(id:int):
     user: User = User.objects.filter(pk=id).get()
@@ -11,7 +9,14 @@ def get_item(id:int):
     item: Item = Item.objects.filter(id=id).get()
     return item
 
-def build_get_item_body(item: Item):
+def get_question_for_item(id:int):
+    item: Item = Item.objects.filter(id=id).get()
+
+    questions: List = Question.objects.all().filter(item = item)
+
+    return questions
+
+def serialise_item(item: Item):
     owner: User = get_user(item.owner.id)
     owner = owner.to_dict()
 
@@ -23,17 +28,57 @@ def build_get_item_body(item: Item):
     except: 
         highest_bidder = {}
 
+    # if there is are questions for the item, get details of questions
+    questions: List
+    try:
+        questions = get_question_for_item(item.id)
+        serialised_quesitons = serialise_quesitons(questions)
+    except: 
+        questions = {}
 
-    # construct payload object with info about item, bidderm owner
-    body : Dict[str][any] = {
+    serialised_item : Dict[str][any] = {
         "id": item.id,
         "title": item.title,
         "description": item.description,
         "price": item.price,
         "highest_bidder": highest_bidder,
-        "owner": owner
+        "owner": owner,
+        "questions": serialised_quesitons
     }
-    return body
+    return serialised_item
+
+def serialise_quesitons(questions: List):
+    questions_serialised: Dict [any][any] = {}
+
+    # each question has foreign key of user that posted and user that asked
+    # item should not be returned as an object, because questions are retrieved as part of items, never alone
+    # no need to return item within question when question is within item
+    for q in questions:
+        owner: User = q.owner.to_dict()
+        user: User = q.user.to_dict()
+        item_id: int = q.item.id
+
+
+        question: Dict[str][any] = {
+            "id": q.id,
+            'question'   : q.question,
+            'owner'      : owner,
+            'user'       : user,
+            'item_id'    : item_id
+        }
+        
+        # if there is an answer for a question, then it should be returned
+        if q.answer: 
+            question.update({"answer": q.answer})
+
+        questions_serialised.update({q.id: question})
+
+    return questions_serialised
+
+def build_response_body_for_get_item(item: Item):
+    serialised_item = serialise_item(item)
+    return serialised_item
+   
 
 # b = Item(
 #                 title = "test item",

@@ -59,16 +59,18 @@ def user_logout(request: HttpRequest):
         return HttpResponse()
     return Http404()
 
-from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt 
-def item_page(request: HttpRequest, item_id:int):
-    if request.method == 'GET':
-        try:
-            item: Item = get_item(item_id)
-        except: 
-            return HttpResponseBadRequest("No item found")
 
-        body = build_get_item_body(item)
+def item_page(request: HttpRequest, item_id:int):
+
+    try:
+        item: Item = get_item(item_id)
+    except: 
+        except: 
+    except: 
+        return HttpResponseBadRequest("No item found")
+
+    if request.method == 'GET':
+        body = build_response_body_for_get_item(item)
         return JsonResponse(body)
 
     if request.method == 'PUT':
