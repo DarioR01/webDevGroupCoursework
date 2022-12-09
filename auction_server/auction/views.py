@@ -1,6 +1,6 @@
 from types import SimpleNamespace
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest, FileResponse
 from django.contrib.auth import authenticate, login, logout
 
 import json
