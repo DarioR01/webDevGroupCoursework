@@ -1,5 +1,10 @@
+import json
+from types import SimpleNamespace
 from typing import Dict, List
 from auction.models import Item, User, Question
+
+from django.http import HttpRequest, HttpResponseBadRequest
+
 
 def get_user(id:int):
     user: User = User.objects.filter(pk=id).get()
@@ -15,6 +20,31 @@ def get_question_for_item(id:int):
     questions: List = Question.objects.all().filter(item = item)
 
     return questions
+
+def post_question_for_item(request: HttpRequest, item: Item):
+    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+    # get values from request to populate question object
+    try: 
+        question: str = data.question
+        user_id: int = data.user_id
+    except:
+        return HttpResponseBadRequest("Could not post question. Check that the request contains the question and the user_id asking the question")
+
+
+    # get values to create new question object
+
+    # owner must exist, because it's obtained from item and not request. Owner for item is checked on item's creation
+    owner_id: int = item.owner.id
+    owner: User = get_user(owner_id)
+
+    try: 
+        user: User = get_user(user_id)
+    except:
+        return HttpResponseBadRequest("Could not post question. User asking question could not be accessed")
+
+    # create question object
+    question: Question = create_new_question(question, owner, user, item)
 
 def serialise_item(item: Item):
     owner: User = get_user(item.owner.id)
