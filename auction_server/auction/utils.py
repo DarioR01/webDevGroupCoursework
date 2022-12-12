@@ -34,11 +34,13 @@ def get_all_item():
     return items_serialised
 
 def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
+    session_data = request.session
+    uid = session_data.get('_auth_user_id')
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to update item object
     try: 
-        highest_bidder_id: int = data.highest_bidder_id
+        highest_bidder_id: int = uid
         price: int = data.price
     except:
         return HttpResponseBadRequest("Could not update item. Check that the request contains the highest_bidder id and a price")
@@ -58,12 +60,14 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     return serialised_item
 
 def post_question_for_item(request: HttpRequest, item: Item):
+    session_data = request.session
+    uid = session_data.get('_auth_user_id')
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to populate question object
     try: 
         question: str = data.question
-        user_id: int = data.user_id
+        user_id: int = uid
     except:
         return HttpResponseBadRequest("Could not post question. Check that the request contains the question and the user_id asking the question")
 
@@ -84,7 +88,8 @@ def post_question_for_item(request: HttpRequest, item: Item):
 
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
-
+    session_data = request.session
+    uid = session_data.get('_auth_user_id')
     # get values from request to update question object
     try: 
         answer: str = data.answer
