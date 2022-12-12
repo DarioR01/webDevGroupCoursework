@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { RouterView, RouterLink } from 'vue-router'
 import { getCookie } from '../../utility'
-console.log(document.cookie)
 </script>
 
 <template>
