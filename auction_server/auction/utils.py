@@ -4,7 +4,7 @@ from typing import Dict, List
 from auction.models import Item, User, Question
 from django.db.models import Q
 
-from django.http import HttpRequest, HttpResponseBadRequest
+from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
 
 
 def get_user(id:int):
@@ -66,7 +66,7 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     item.save()
 
     serialised_item: dict[str, str | int | User | List] = serialise_item(item)
-    return serialised_item
+    return JsonResponse(serialised_item)
 
 def updated_profile_page(request: HttpRequest):
     session_data = request.session
@@ -91,8 +91,10 @@ def updated_profile_page(request: HttpRequest):
     return user
     
 def post_question_for_item(request: HttpRequest, item: Item):
-    session_data = request.session
-    uid: int = session_data.get('_auth_user_id')
+    # session_data = request.session
+    # uid: int = session_data.get('_auth_user_id')
+
+    uid = 3
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to populate question object
@@ -102,8 +104,6 @@ def post_question_for_item(request: HttpRequest, item: Item):
     except:
         return HttpResponseBadRequest("Could not post question. Check that the request contains the question and the user_id asking the question")
 
-
-    # get values to create new question object
 
     # owner must exist, because it's obtained from item and not request. Owner for item is checked on item's creation
     owner_id: int = item.owner.id
@@ -116,30 +116,25 @@ def post_question_for_item(request: HttpRequest, item: Item):
 
     # create question object
     question: Question = create_new_question(question, owner, user, item)
+    serialised_question = serialise_question(question)
+    return JsonResponse(serialised_question)
+
     
 def post_new_item(request: HttpRequest):
     session_data = request.session
-    uid = session_data.get('_auth_user_id')
+    owner_id: int = session_data.get('_auth_user_id')
+
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
     try:
         title: str = data.title
         description: str = data.description
         price: int = data.price
-        owner: int = uid
     except:
         return HttpResponseBadRequest("Could not post item. check that the request contains the title, descpription and price")
-
-    item: Item = create_new_item(title, description, price, owner)
-
-def create_new_item(title, description, price, owner):
-    item: Item = Item(
-        title = title,
-        description = description,
-        price = price,
-        owner = owner
-    )
-    item.save()
-    return item
+    
+    item: Item = create_new_item(title, description, price, owner_id)
+    
 
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
@@ -167,7 +162,7 @@ def post_answer_for_question(request: HttpRequest, item_id: int, question_id: in
     question.save()
 
     serialised_question = serialise_question(question)
-    return serialised_question
+    return JsonResponse(serialised_question)
 
 def serialise_item(item: Item):
     owner: User = get_user(item.owner.id)
@@ -234,7 +229,7 @@ def build_questions_list(questions: List):
 
 def build_response_body_for_get_item(item: Item):
     serialised_item = serialise_item(item)
-    return serialised_item
+    return JsonResponse(serialised_item)
 
 def create_new_question(question: str, owner: User, user: User, item: Item, answer: str = None):
     question: Question = Question(
@@ -247,16 +242,15 @@ def create_new_question(question: str, owner: User, user: User, item: Item, answ
     question.save()
     return question
 
+def create_new_item(title, description, price, owner_id):
+    owner: User = get_user(owner_id)
 
-    
+    item: Item = Item(
+        title = title,
+        description = description,
+        price = price,
+        owner = owner
+    )
+    item.save()
 
-    
-
-# b = Item(
-#                 title = "test item",
-#                 description = "this is a test item",
-#                 price = 0,
-#                 owner = user
-#             )
-
-#         b.save()
+    return item

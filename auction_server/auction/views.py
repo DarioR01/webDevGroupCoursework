@@ -82,17 +82,17 @@ def item_page(request: HttpRequest, item_id:int):
     # get item for item page
     if request.method == 'GET':
         body: dict[str, str | int | User | List] = build_response_body_for_get_item(item)
-        return JsonResponse(body)
+        return HttpResponse(body)
 
     # update item's highest bidder and new price
     if request.method == 'PUT':
         updated_item: dict[str, str | int | User | List] = update_item_highest_bidder_and_price(request, item)
-        return JsonResponse(updated_item)
+        return HttpResponse(updated_item)
 
     # post a new question for an item
     if request.method == 'POST':
-        post_question_for_item(request, item)
-        return HttpResponse("Success. A new question was created")
+        updated_question: Question = post_question_for_item(request, item)
+        return HttpResponse(updated_question)
 
 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
