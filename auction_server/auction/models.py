@@ -81,7 +81,7 @@ class Item(models.Model):
     description = models.CharField(max_length=144, editable=True)
     price = models.IntegerField(editable=True)
     #picture = models.ImageField(upload_to='./item_uploads', editable=True)
-    #final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
+    final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
     highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('auction.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
     
@@ -96,7 +96,7 @@ class Item(models.Model):
             'description'       : self.description,
             'price'             : self.price,
             #'picture'           : self.picture,
-            #'final_date'         : self.final_date,
+            'final_date'         : self.final_date,
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
         }

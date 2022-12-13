@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 import json
 from types import SimpleNamespace
 from typing import Dict, List
@@ -137,10 +137,16 @@ def post_new_item(request: HttpRequest):
         title: str = data.title
         description: str = data.description
         price: int = data.price
+        final_date: str = data.final_date
     except:
-        return HttpResponseBadRequest("Could not post item. check that the request contains the title, descpription and price")
+        return HttpResponseBadRequest("Could not post item. check that the request contains the title, descpription, a final date and price")
     
-    item: Item = create_new_item(title, description, price, owner_id)
+    final_date = convert_string_date_to_date(final_date)
+    
+    if not is_valid_final_date(final_date):
+        return HttpResponseBadRequest("Invalid date. Expiration date for an item must be future date")
+
+    item: Item = create_new_item(title, description, price, final_date, owner_id)
     serialised_item: dict[str, str | int | User | List] = serialise_item(item)
     return JsonResponse(serialised_item)
     
@@ -207,6 +213,7 @@ def serialise_item(item: Item):
         "title": item.title,
         "description": item.description,
         "price": item.price,
+        "finale_date": item.final_date,
         "highest_bidder": highest_bidder,
         "owner": owner,
         "questions": questions
@@ -269,26 +276,28 @@ def create_new_question(question: str, owner: User, user: User, item: Item, answ
     question.save()
     return question
 
-def create_new_item(title, description, price, owner_id):
+def create_new_item(title, description, price, final_date, owner_id):
     owner: User = get_user(owner_id)
 
     item: Item = Item(
         title = title,
         description = description,
         price = price,
-        owner = owner
+        owner = owner,
+        final_date = final_date
     )
     item.save()
 
     return item
 
 import re
-def string_date_matches():
-    user = get_user(3)
-
+from django.utils.dateparse import parse_datetime
+def convert_string_date_to_date(string_date: str):
     regex = r"^(?:(?:1[6-9]|[2-9]\d)?\d{2})(?:(?:(\/|-|\.)(?:0?[13578]|1[02])\1(?:31))|(?:(\/|-|\.)(?:0?[13-9]|1[0-2])\2(?:29|30)))$|^(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(\/|-|\.)0?2\3(?:29)$|^(?:(?:1[6-9]|[2-9]\d)?\d{2})(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:0?[1-9]|1\d|2[0-8])$"
 
-    string = str(user.date_of_birth)
-    print(string)
-    if re.match(regex, string):
-        print('Yes')
+    if re.match(regex, string_date):
+        date = parse_datetime(string_date)
+        return date
+
+def is_valid_final_date(date):
+    return date > datetime.now()
