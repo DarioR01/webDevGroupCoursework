@@ -66,8 +66,9 @@ def user_logout(request: HttpRequest):
 
 
 def home(request: HttpRequest):
+    #TODO implement filetering name 'filter'
     if request.method == 'GET':
-        items = get_all_item()
+        items = get_list_of_items(request)
         return JsonResponse(items)
 
 
