@@ -2,6 +2,7 @@ import json
 from types import SimpleNamespace
 from typing import Dict, List
 from auction.models import Item, User, Question
+from django.db.models import Q
 
 from django.http import HttpRequest, HttpResponseBadRequest
 
@@ -23,8 +24,16 @@ def get_all_questions_for_item(id:int):
     questions: List = Question.objects.all().filter(item = item)
     return questions
 
-def get_all_item():
-    items: List = Item.objects.all()
+def get_list_of_items(request: HttpRequest):
+    try: 
+        data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+        filter_keyword: str = data.filter
+        items: List = Item.objects.filter(
+            Q(title__contains=filter_keyword) |
+            Q(description__contains=filter_keyword)
+        )
+    except:
+        items: List = Item.objects.all()
 
     items_serialised: Dict [any][any] = {}
     for item in items:
