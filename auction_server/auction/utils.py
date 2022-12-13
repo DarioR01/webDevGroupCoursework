@@ -141,6 +141,8 @@ def post_new_item(request: HttpRequest):
         return HttpResponseBadRequest("Could not post item. check that the request contains the title, descpription and price")
     
     item: Item = create_new_item(title, description, price, owner_id)
+    serialised_item: dict[str, str | int | User | List] = serialise_item(item)
+    return JsonResponse(serialised_item)
     
 
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):

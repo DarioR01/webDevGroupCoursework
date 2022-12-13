@@ -112,7 +112,7 @@ def profile_page(request: HttpRequest):
     
     if request.method == 'POST':
         new_item: Item = post_new_item(request)
-        return JsonResponse(new_item, safe=False)
+        return HttpResponse(new_item)
     
 
 def upload_image(request: HttpRequest):
