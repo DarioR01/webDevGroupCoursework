@@ -80,7 +80,7 @@ def updated_profile_page(request: HttpRequest):
     user.save()
     
     return user
-
+    
 def post_question_for_item(request: HttpRequest, item: Item):
     session_data = request.session
     uid = session_data.get('_auth_user_id')
@@ -107,6 +107,30 @@ def post_question_for_item(request: HttpRequest, item: Item):
 
     # create question object
     question: Question = create_new_question(question, owner, user, item)
+    
+def post_new_item(request: HttpRequest):
+    session_data = request.session
+    uid = session_data.get('_auth_user_id')
+    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+    try:
+        title: str = data.title
+        description: str = data.description
+        price: int = data.price
+        owner: int = uid
+    except:
+        return HttpResponseBadRequest("Could not post item. check that the request contains the title, descpription and price")
+
+    item: Item = create_new_item(title, description, price, owner)
+
+def create_new_item(title, description, price, owner):
+    item: Item = Item(
+        title = title,
+        description = description,
+        price = price,
+        owner = owner
+    )
+    item.save()
+    return item
 
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
@@ -214,6 +238,8 @@ def create_new_question(question: str, owner: User, user: User, item: Item, answ
     question.save()
     return question
 
+
+    
 
     
 

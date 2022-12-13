@@ -107,7 +107,21 @@ def upload_image(request: HttpRequest):
             )
         image.save()
         return HttpResponse("Success. A new question was created")
-
+    
+def newItem(request: HttpRequest):
+    if request.method == 'POST':
+        post_new_item(request)
+        return HttpResponse("Success a new item was created")
+    
+def getProfile(request: HttpRequest, user_id: int):
+    try:
+        user: User = get_user(user_id)
+    except:
+        return HttpResponseBadRequest("User is not found")
+    
+    if request.method == 'GET':
+        return JsonResponse(user)
+    
 def editProfile(request: HttpRequest):
         if request.method == 'PUT':
             updated_profile = updated_profile_page(request)
