@@ -71,7 +71,9 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
 def updated_profile_page(request: HttpRequest):
     session_data = request.session
     uid: int = session_data.get('_auth_user_id')
+
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
     try: 
         user_id: int = uid
         email: str = data.email
@@ -164,6 +166,15 @@ def post_answer_for_question(request: HttpRequest, item_id: int, question_id: in
     serialised_question = serialise_question(question)
     return JsonResponse(serialised_question)
 
+def serialise_user(user: User):
+    serialised_user : Dict[str][any] = {
+        "email": user.email,
+        "name": user.name,
+        "surname": user.surname,
+        "date_of_birth": user.date_of_birth,
+    }
+    return serialised_user
+
 def serialise_item(item: Item):
     owner: User = get_user(item.owner.id)
     owner = owner.to_dict()
@@ -231,6 +242,15 @@ def build_response_body_for_get_item(item: Item):
     serialised_item = serialise_item(item)
     return JsonResponse(serialised_item)
 
+def build_response_body_for_get_user(request):
+    session_data = request.session
+    uid: int = session_data.get('_auth_user_id')
+
+    user: User = get_user(uid)
+
+    serialised_user = serialise_user(user)
+    return JsonResponse(serialised_user)
+
 def create_new_question(question: str, owner: User, user: User, item: Item, answer: str = None):
     question: Question = Question(
         question = question,
@@ -254,3 +274,14 @@ def create_new_item(title, description, price, owner_id):
     item.save()
 
     return item
+
+import re
+def string_date_matches():
+    user = get_user(3)
+
+    regex = r"^(?:(?:1[6-9]|[2-9]\d)?\d{2})(?:(?:(\/|-|\.)(?:0?[13578]|1[02])\1(?:31))|(?:(\/|-|\.)(?:0?[13-9]|1[0-2])\2(?:29|30)))$|^(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(\/|-|\.)0?2\3(?:29)$|^(?:(?:1[6-9]|[2-9]\d)?\d{2})(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:0?[1-9]|1\d|2[0-8])$"
+
+    string = str(user.date_of_birth)
+    print(string)
+    if re.match(regex, string):
+        print('Yes')

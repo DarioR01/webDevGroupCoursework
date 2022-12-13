@@ -81,34 +81,34 @@ def item_page(request: HttpRequest, item_id:int):
 
     # get item for item page
     if request.method == 'GET':
-        body: dict[str, str | int | User | List] = build_response_body_for_get_item(item)
+        body: JsonResponse = build_response_body_for_get_item(item)
         return HttpResponse(body)
 
     # update item's highest bidder and new price
     if request.method == 'PUT':
-        updated_item: dict[str, str | int | User | List] = update_item_highest_bidder_and_price(request, item)
+        updated_item: HttpResponseBadRequest | JsonResponse = update_item_highest_bidder_and_price(request, item)
         return HttpResponse(updated_item)
 
     # post a new question for an item
     if request.method == 'POST':
-        updated_question: Question = post_question_for_item(request, item)
+        updated_question: HttpResponseBadRequest | JsonResponse = post_question_for_item(request, item)
         return HttpResponse(updated_question)
 
 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
     if request.method == 'PUT':
-        updated_question: Question = post_answer_for_question(request, item_id, question_id)
+        updated_question: HttpResponseBadRequest | JsonResponse = post_answer_for_question(request, item_id, question_id)
         return HttpResponse(updated_question)
 
 
 def profile_page(request: HttpRequest):
-    # if request.method == 'GET':
-    #     #get profile
-    #     return HttpResponse("Success a new item was created")
+    if request.method == 'GET':
+        user: JsonResponse = build_response_body_for_get_user(request)
+        return HttpResponse(user)
 
-    # if request.method == 'PUT':
-    #     #edit profile
-    #     return HttpResponse("Success a new item was created")
+    if request.method == 'PUT':
+        #edit profile
+        return HttpResponse("Success a new item was created")
     
     if request.method == 'POST':
         new_item: Item = post_new_item(request)
