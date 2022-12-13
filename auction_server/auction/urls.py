@@ -27,7 +27,5 @@ urlpatterns = [
     path('item/<int:item_id>', views.item_page, name='item page'),
     path('item/<int:item_id>/<int:question_id>', views.question_answer, name='question answer'),
     path('profile/', views.profile_page, name='profile profile'),
-    path('editProfile/', views.editProfile, name='edit user profile'),
-    path('addNewitem/', views.newItem, name='add new item'),
     path('image/', views.upload_image, name='image upload'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,3 +1,4 @@
+from datetime import date
 import json
 from types import SimpleNamespace
 from typing import Dict, List
@@ -75,22 +76,26 @@ def updated_profile_page(request: HttpRequest):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     try: 
-        user_id: int = uid
+        name: str = data.name
+        surname: str = data.surname
         email: str = data.email
         date_of_birth: int = data.date_of_birth
     except:
         return HttpResponseBadRequest("Could not update the user. check that the request contains the email, date of birth and image.")
 
     try: 
-        user: User = get_user(user_id)
+        user: User = get_user(uid)
     except:
         return HttpResponseBadRequest("Could not update the user. the user could not accessed")
 
+    user.name = name
+    user.surname = surname
     user.email = email
     user.date_of_birth = date_of_birth
     user.save()
     
-    return user
+    serialised_user: dict[str, str | date] = serialise_user(user)
+    return JsonResponse(serialised_user)
     
 def post_question_for_item(request: HttpRequest, item: Item):
     # session_data = request.session

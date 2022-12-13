@@ -107,8 +107,8 @@ def profile_page(request: HttpRequest):
         return HttpResponse(user)
 
     if request.method == 'PUT':
-        #edit profile
-        return HttpResponse("Success a new item was created")
+        updated_profile: HttpResponseBadRequest | JsonResponse = updated_profile_page(request)
+        return HttpResponse(updated_profile)
     
     if request.method == 'POST':
         new_item: Item = post_new_item(request)
@@ -125,18 +125,3 @@ def upload_image(request: HttpRequest):
         image.save()
         return HttpResponse("Success. A new question was created")
 
-
-
-
-
-
-
-
-def editProfile(request: HttpRequest):
-        if request.method == 'PUT':
-            updated_profile: User = updated_profile_page(request)
-            return JsonResponse(updated_profile)
-def newItem(request: HttpRequest):
-    if request.method == 'POST':
-        post_new_item(request)
-        return HttpResponse("Success a new item was created")
