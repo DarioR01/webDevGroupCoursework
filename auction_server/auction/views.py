@@ -96,8 +96,24 @@ def item_page(request: HttpRequest, item_id:int):
 
 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
-    updated_question: Question = post_answer_for_question(request, item_id, question_id)
-    return JsonResponse(updated_question)
+    if request.method == 'PUT':
+        updated_question: Question = post_answer_for_question(request, item_id, question_id)
+        return HttpResponse(updated_question)
+
+
+def profile_page(request: HttpRequest):
+    # if request.method == 'GET':
+    #     #get profile
+    #     return HttpResponse("Success a new item was created")
+
+    # if request.method == 'PUT':
+    #     #edit profile
+    #     return HttpResponse("Success a new item was created")
+    
+    if request.method == 'POST':
+        new_item: Item = post_new_item(request)
+        return JsonResponse(new_item, safe=False)
+    
 
 def upload_image(request: HttpRequest):
     if request.method == 'POST':
@@ -108,22 +124,19 @@ def upload_image(request: HttpRequest):
             )
         image.save()
         return HttpResponse("Success. A new question was created")
-    
-def newItem(request: HttpRequest):
-    if request.method == 'POST':
-        post_new_item(request)
-        return HttpResponse("Success a new item was created")
-    
-def getProfile(request: HttpRequest, user_id: int):
-    try:
-        user: User = get_user(user_id)
-    except:
-        return HttpResponseBadRequest("User is not found")
-    
-    if request.method == 'GET':
-        return JsonResponse(user)
-    
+
+
+
+
+
+
+
+
 def editProfile(request: HttpRequest):
         if request.method == 'PUT':
             updated_profile: User = updated_profile_page(request)
             return JsonResponse(updated_profile)
+def newItem(request: HttpRequest):
+    if request.method == 'POST':
+        post_new_item(request)
+        return HttpResponse("Success a new item was created")
