@@ -66,3 +66,6 @@ def logout(request: HttpRequest):
 
         return HttpResponse({"Successfully logged out."}, safe=False)
 
+
+            
+

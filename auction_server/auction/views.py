@@ -107,5 +107,8 @@ def upload_image(request: HttpRequest):
             )
         image.save()
         return HttpResponse("Success. A new question was created")
-        
 
+def editProfile(request: HttpRequest):
+        if request.method == 'PUT':
+            updated_profile = updated_profile_page(request)
+            return JsonResponse(updated_profile)
