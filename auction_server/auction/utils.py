@@ -1,19 +1,22 @@
 from datetime import date, datetime
 import json
+import re
 from types import SimpleNamespace
 from typing import Dict, List
+
 from auction.models import Item, User, Question
 from django.db.models import Q
+from django.utils.dateparse import parse_datetime
 
 from django.http import HttpRequest, HttpResponseBadRequest, JsonResponse
 
 
-def get_user(id:int):
-    user: User = User.objects.filter(pk=id).get()
+def get_user(user_id:int):
+    user: User = User.objects.filter(pk=user_id).get()
     return user
 
-def get_item(id:int):
-    item: Item = Item.objects.filter(id=id).get()
+def get_item(item_id:int):
+    item: Item = Item.objects.filter(id=item_id).get()
     return item
 
 def get_question_for_item(item:Item, question_id: int):
@@ -26,14 +29,18 @@ def get_all_questions_for_item(id:int):
     return questions
 
 def get_list_of_items(request: HttpRequest):
+    #if in the request is present a filter key, get list of filtered items
     try: 
         data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+        # filter items using the filter key if contained in title or description
         filter_keyword: str = data.filter
         items: List = Item.objects.filter(
             Q(title__contains=filter_keyword) |
             Q(description__contains=filter_keyword)
         )
     except:
+        # if no filter, get all the items
         items: List = Item.objects.all()
 
     items_serialised: Dict [any][any] = {}
@@ -44,8 +51,10 @@ def get_list_of_items(request: HttpRequest):
     return items_serialised
 
 def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
+    #get user id from the session
     session_data = request.session
     uid: int = session_data.get('_auth_user_id')
+
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to update item object
@@ -70,11 +79,13 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     return JsonResponse(serialised_item)
 
 def updated_profile_page(request: HttpRequest):
+    #get user id from the session
     session_data = request.session
     uid: int = session_data.get('_auth_user_id')
 
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
+    # get values from request to update user object
     try: 
         name: str = data.name
         surname: str = data.surname
@@ -98,10 +109,10 @@ def updated_profile_page(request: HttpRequest):
     return JsonResponse(serialised_user)
     
 def post_question_for_item(request: HttpRequest, item: Item):
-    # session_data = request.session
-    # uid: int = session_data.get('_auth_user_id')
+    #get user id from the session
+    session_data = request.session
+    uid: int = session_data.get('_auth_user_id')
 
-    uid = 3
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to populate question object
@@ -110,7 +121,6 @@ def post_question_for_item(request: HttpRequest, item: Item):
         user_id: int = uid
     except:
         return HttpResponseBadRequest("Could not post question. Check that the request contains the question and the user_id asking the question")
-
 
     # owner must exist, because it's obtained from item and not request. Owner for item is checked on item's creation
     owner_id: int = item.owner.id
@@ -123,16 +133,18 @@ def post_question_for_item(request: HttpRequest, item: Item):
 
     # create question object
     question: Question = create_new_question(question, owner, user, item)
+
     serialised_question = serialise_question(question)
     return JsonResponse(serialised_question)
 
-    
 def post_new_item(request: HttpRequest):
+    #get user id from the session
     session_data = request.session
     owner_id: int = session_data.get('_auth_user_id')
 
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
+    # get values from request to update item object
     try:
         title: str = data.title
         description: str = data.description
@@ -141,8 +153,10 @@ def post_new_item(request: HttpRequest):
     except:
         return HttpResponseBadRequest("Could not post item. check that the request contains the title, descpription, a final date and price")
     
+    #parse string JSON date to datetime date for model
     final_date = convert_string_date_to_date(final_date)
     
+    #validate future date
     if not is_valid_final_date(final_date):
         return HttpResponseBadRequest("Invalid date. Expiration date for an item must be future date")
 
@@ -150,11 +164,13 @@ def post_new_item(request: HttpRequest):
     serialised_item: dict[str, str | int | User | List] = serialise_item(item)
     return JsonResponse(serialised_item)
     
-
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):
-    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+    #get user id from the session
     session_data = request.session
     uid: int = session_data.get('_auth_user_id')
+
+    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+    
     # get values from request to update question object
     try: 
         answer: str = data.answer
@@ -180,6 +196,7 @@ def post_answer_for_question(request: HttpRequest, item_id: int, question_id: in
     return JsonResponse(serialised_question)
 
 def serialise_user(user: User):
+    #build JSON serialisable user object
     serialised_user : Dict[str][any] = {
         "email": user.email,
         "name": user.name,
@@ -189,6 +206,7 @@ def serialise_user(user: User):
     return serialised_user
 
 def serialise_item(item: Item):
+    #get owner fields
     owner: User = get_user(item.owner.id)
     owner = owner.to_dict()
 
@@ -221,9 +239,7 @@ def serialise_item(item: Item):
     return serialised_item
 
 def serialise_question(question: Question):
-    # each question has foreign key of user that posted and user that asked
-    # item should not be returned as an object, because questions are retrieved as part of items, never alone
-    # no need to return item within question when question is within item
+    #get objects owner, user from foreign keys
     owner: User = question.owner.to_dict()
     user: User = question.user.to_dict()
     item_id: int = question.item.id
@@ -245,6 +261,7 @@ def serialise_question(question: Question):
     return question_object
 
 def build_questions_list(questions: List):
+    #build list of JSON serialised item objects
     questions_serialised: Dict [any][any] = {}
     for q in questions:
         question = serialise_question(q)
@@ -253,19 +270,23 @@ def build_questions_list(questions: List):
     return questions_serialised
 
 def build_response_body_for_get_item(item: Item):
+    # build JSON serialisable item object
     serialised_item = serialise_item(item)
     return JsonResponse(serialised_item)
 
 def build_response_body_for_get_user(request):
+    #get user id from the session
     session_data = request.session
     uid: int = session_data.get('_auth_user_id')
 
     user: User = get_user(uid)
 
+    #build JSON serialisable user object
     serialised_user = serialise_user(user)
     return JsonResponse(serialised_user)
 
 def create_new_question(question: str, owner: User, user: User, item: Item, answer: str = None):
+    #create new uestion object
     question: Question = Question(
         question = question,
         answer = answer,
@@ -277,8 +298,10 @@ def create_new_question(question: str, owner: User, user: User, item: Item, answ
     return question
 
 def create_new_item(title, description, price, final_date, owner_id):
+    #get owner 
     owner: User = get_user(owner_id)
 
+    #create new item object
     item: Item = Item(
         title = title,
         description = description,
@@ -290,14 +313,15 @@ def create_new_item(title, description, price, final_date, owner_id):
 
     return item
 
-import re
-from django.utils.dateparse import parse_datetime
 def convert_string_date_to_date(string_date: str):
+    #yyyy-mm-dd 
     regex = r"^(?:(?:1[6-9]|[2-9]\d)?\d{2})(?:(?:(\/|-|\.)(?:0?[13578]|1[02])\1(?:31))|(?:(\/|-|\.)(?:0?[13-9]|1[0-2])\2(?:29|30)))$|^(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(\/|-|\.)0?2\3(?:29)$|^(?:(?:1[6-9]|[2-9]\d)?\d{2})(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:0?[1-9]|1\d|2[0-8])$"
 
+    #parse date from string as it comes in JSON request to datetime for model
     if re.match(regex, string_date):
         date = parse_datetime(string_date)
         return date
 
 def is_valid_final_date(date):
+    # check if date argument is a future date, returns boolean
     return date > datetime.now()

@@ -1,15 +1,13 @@
-from types import SimpleNamespace
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest, FileResponse
 from django.contrib.auth import authenticate, login, logout
-
-import json
 from .forms import UserRegistration, UserLogin
+
 from typing import Dict 
 from datetime import datetime
 from .utils import *
 
-from .models import User, Item, Question, Image
+from .models import User, Item, Image
 
 def user_login(request: HttpRequest):
     if request.method == 'POST':
@@ -99,7 +97,6 @@ def question_answer(request: HttpRequest, item_id: int, question_id: int):
     if request.method == 'PUT':
         updated_question: HttpResponseBadRequest | JsonResponse = post_answer_for_question(request, item_id, question_id)
         return HttpResponse(updated_question)
-
 
 def profile_page(request: HttpRequest):
     if request.method == 'GET':
