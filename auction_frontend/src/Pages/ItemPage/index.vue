@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { getCookie } from '../../utility'
 interface Question {
-    id?: number;
-    item_id: number;
+    id?: string;
+    item_id?: number;
     question: string;
     answer?: string;
 }
@@ -29,7 +29,7 @@ interface Item {
                     <div class="card-body">
                         <h1 class="card-title">{{ item.title }}</h1>
                         <p class="card-text">{{ item.description }}</p>
-                        <form class="form-outline" @submit="bid">
+                        <form class="form-outline" @submit.prevent="bid">
                             <span>
                                 Current Bid:
                                 <strong class="display-6">{{ item.price }}£</strong>
@@ -49,16 +49,17 @@ interface Item {
 
         <h2>Questions</h2>
         <ul class="list-group mb-1">
-            <template v-for="question in questions">
+            <template v-for="question, index in questions">
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
                         <div class="fw-bold">{{ question.question }}</div>
-                        <div v-if="item.answer !== ''">{{ question.answer }}</div>
+                        <div v-if="question.answer !== '' && question.answer !== undefined">{{ question.answer }}</div>
                         <div v-else>
-                            <form class="form-outline" @submit="answer">
+                            <form class="form-outline" @submit.prevent="answer(question.id, index)">
                                 <div class="d-flex align-items-center">
                                     <div class="form-floating mb-3">
-                                        <input type="email" class="form-control" id="answerQuestion">
+                                        <input type="text" class="form-control" :id="question.id"
+                                            v-model="new_answer[index]">
                                         <label for="answerQuestion">Click to Answer the question</label>
                                     </div>
                                     <div>
@@ -71,25 +72,13 @@ interface Item {
                 </li>
             </template>
         </ul>
-        <form class="form-outline" @submit="ask">
+        <form class="form-outline" @submit.prevent="ask">
             <div class="form-floating">
                 <input type="text" class="form-control" id="askQuestion" v-model="new_question">
                 <label for="askQuestion">Click to ask a question</label>
             </div>
             <br />
             <button type="submit" class="btn btn-primary btn-lg">ask</button>
-        </form>
-
-
-        <form class="form-outline" @submit="answer">
-            <div class="d-flex align-items-center">
-                <div class="form-floating mb-3">
-                    <input type="file" class="form-control" id="answerQuestion" @change="uploadFile" ref="file">
-                </div>
-                <div>
-                    <button type="submit" class="btn btn-primary">Answer</button>
-                </div>
-            </div>
         </form>
     </div>
 </template>
@@ -102,6 +91,8 @@ export default {
             questions: [] as Array<Question>,
             new_price: 0,
             new_question: "",
+            new_answer: [],
+            question_id: "",
             file: {},
         }
     },
@@ -115,14 +106,12 @@ export default {
                 referrerPolicy: "no-referrer",
             });
             const item = await response.json();
-            console.log(item);
             this.item = item;
             const questions: Array<Question> = Object.values(item.questions);
             this.questions = questions;
         },
 
-        async bid(e: { preventDefault: () => void; }) {
-            e.preventDefault();
+        async bid() {
             if (this.item.price < this.new_price) {
                 const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}`, {
                     method: 'PUT',
@@ -135,7 +124,6 @@ export default {
                         price: this.new_price
                     })
                 });
-                console.log(response)
                 if (response.status === 200) {
                     this.item.price = this.new_price
                 }
@@ -148,8 +136,7 @@ export default {
             }
         },
 
-        async ask(e: { preventDefault: () => void; }) {
-            e.preventDefault();
+        async ask() {
             if (this.new_question != null) {
                 const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}`, {
                     method: 'POST',
@@ -162,7 +149,8 @@ export default {
                     })
                 });
                 if (response.status === 200) {
-                    this.questions.push({ item_id: this.item.id, question: this.new_question })
+                    this.questions.push({ question: this.new_question })
+                    this.new_question = ""
                 }
                 else {
                     window.alert("You bid was not successful");
@@ -173,19 +161,8 @@ export default {
             }
         },
 
-        uploadFile() {
-            this.file = this.$refs.file.files[0];
-        },
-
-        async answer(e: { preventDefault: () => void; }) {
-            e.preventDefault();
-            const formData = new FormData();
-            formData.append('file', this.file);
-
-            for (var key of formData.entries()) {
-                console.log(key[0] + ', ' + key[1]);
-            }
-            const response = await fetch(`http://localhost:8000/image/`, {
+        async answer(question_id: string | undefined, index: number) {
+            const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}/${question_id}`, {
                 method: 'POST',
                 credentials: "include",
                 mode: "cors",
@@ -193,9 +170,9 @@ export default {
                 headers: {
                     'X-CSRFToken': getCookie('csrftoken'),
                 },
-                body: formData,
+                body: JSON.stringify({ answer: this.new_answer[index] }),
             });
-            console.log(response)
+            this.questions[index].answer = this.new_answer[index]
         },
     }
 }

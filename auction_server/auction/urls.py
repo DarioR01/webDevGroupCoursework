@@ -26,5 +26,6 @@ urlpatterns = [
     path('home/', views.home, name='home page'),
     path('item/<int:item_id>', views.item_page, name='item page'),
     path('item/<int:item_id>/<int:question_id>', views.question_answer, name='question answer'),
+    path('editProfile/', views.editProfile, name='edit user profile'),
     path('image/', views.upload_image, name='image upload'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

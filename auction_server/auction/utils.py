@@ -68,6 +68,28 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     serialised_item = serialise_item(item)
     return serialised_item
 
+def updated_profile_page(request: HttpRequest):
+    session_data = request.session
+    uid = session_data.get('_auth_user_id')
+    data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+    try: 
+        user_id: int = uid
+        email: str = data.email
+        date_of_birth: int = data.date_of_birth
+    except:
+        return HttpResponseBadRequest("Could not update the user. check that the request contains the email, date of birth and image.")
+
+    try: 
+        user = get_user(user_id)
+    except:
+        return HttpResponseBadRequest("Could not update the user. the user could not accessed")
+
+    user.email = email
+    user.date_of_birth = date_of_birth
+    user.save()
+    
+    return user
+
 def post_question_for_item(request: HttpRequest, item: Item):
     session_data = request.session
     uid = session_data.get('_auth_user_id')
@@ -178,7 +200,6 @@ def serialise_question(question: Question):
 
     return question_object
 
-
 def build_questions_list(questions: List):
     questions_serialised: Dict [any][any] = {}
     for q in questions:
@@ -190,7 +211,6 @@ def build_questions_list(questions: List):
 def build_response_body_for_get_item(item: Item):
     serialised_item = serialise_item(item)
     return serialised_item
-   
 
 def create_new_question(question: str, owner: User, user: User, item: Item, answer: str = None):
     question: Question = Question(
@@ -200,10 +220,11 @@ def create_new_question(question: str, owner: User, user: User, item: Item, answ
         user = user,
         item = item            
     )
-
     question.save()
-
     return question
+
+
+    
 
 # b = Item(
 #                 title = "test item",
