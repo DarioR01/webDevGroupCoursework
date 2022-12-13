@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 
 import json
 from .forms import UserRegistration, UserLogin
-from typing import Dict
+from typing import Dict 
 from datetime import datetime
 from .utils import *
 
@@ -68,7 +68,7 @@ def user_logout(request: HttpRequest):
 def home(request: HttpRequest):
     #TODO implement filetering name 'filter'
     if request.method == 'GET':
-        items = get_list_of_items(request)
+        items: Dict [any][any] = get_list_of_items(request)
         return JsonResponse(items)
 
 
@@ -81,12 +81,12 @@ def item_page(request: HttpRequest, item_id:int):
 
     # get item for item page
     if request.method == 'GET':
-        body = build_response_body_for_get_item(item)
+        body: dict[str, str | int | User | List] = build_response_body_for_get_item(item)
         return JsonResponse(body)
 
     # update item's highest bidder and new price
     if request.method == 'PUT':
-        updated_item = update_item_highest_bidder_and_price(request, item)
+        updated_item: dict[str, str | int | User | List] = update_item_highest_bidder_and_price(request, item)
         return JsonResponse(updated_item)
 
     # post a new question for an item
@@ -96,13 +96,13 @@ def item_page(request: HttpRequest, item_id:int):
 
 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
-    updated_question = post_answer_for_question(request, item_id, question_id)
+    updated_question: Question = post_answer_for_question(request, item_id, question_id)
     return JsonResponse(updated_question)
 
 def upload_image(request: HttpRequest):
     if request.method == 'POST':
         image = request.FILES.get("file")
-        image = Image.objects.create(
+        image: Image = Image.objects.create(
                 title = "The title",
                 image = image,
             )
@@ -111,5 +111,5 @@ def upload_image(request: HttpRequest):
 
 def editProfile(request: HttpRequest):
         if request.method == 'PUT':
-            updated_profile = updated_profile_page(request)
+            updated_profile: User = updated_profile_page(request)
             return JsonResponse(updated_profile)

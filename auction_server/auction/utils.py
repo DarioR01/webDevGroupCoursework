@@ -37,14 +37,14 @@ def get_list_of_items(request: HttpRequest):
 
     items_serialised: Dict [any][any] = {}
     for item in items:
-        serialised_item = serialise_item(item)
+        serialised_item: dict[str, str | int | User | List] = serialise_item(item)
         items_serialised.update({item.id: serialised_item})
 
     return items_serialised
 
 def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     session_data = request.session
-    uid = session_data.get('_auth_user_id')
+    uid: int = session_data.get('_auth_user_id')
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to update item object
@@ -56,7 +56,7 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     
     #find the user corresponding to the highest bidder
     try: 
-        highest_bidder = get_user(highest_bidder_id)
+        highest_bidder: User = get_user(highest_bidder_id)
     except:
         return HttpResponseBadRequest("Could not bid on item. User bidding on item could not be accessed")
 
@@ -65,12 +65,12 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     item.price = price
     item.save()
 
-    serialised_item = serialise_item(item)
+    serialised_item: dict[str, str | int | User | List] = serialise_item(item)
     return serialised_item
 
 def updated_profile_page(request: HttpRequest):
     session_data = request.session
-    uid = session_data.get('_auth_user_id')
+    uid: int = session_data.get('_auth_user_id')
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
     try: 
         user_id: int = uid
@@ -80,7 +80,7 @@ def updated_profile_page(request: HttpRequest):
         return HttpResponseBadRequest("Could not update the user. check that the request contains the email, date of birth and image.")
 
     try: 
-        user = get_user(user_id)
+        user: User = get_user(user_id)
     except:
         return HttpResponseBadRequest("Could not update the user. the user could not accessed")
 
@@ -92,7 +92,7 @@ def updated_profile_page(request: HttpRequest):
 
 def post_question_for_item(request: HttpRequest, item: Item):
     session_data = request.session
-    uid = session_data.get('_auth_user_id')
+    uid: int = session_data.get('_auth_user_id')
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
 
     # get values from request to populate question object
@@ -120,7 +120,7 @@ def post_question_for_item(request: HttpRequest, item: Item):
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
     session_data = request.session
-    uid = session_data.get('_auth_user_id')
+    uid: int = session_data.get('_auth_user_id')
     # get values from request to update question object
     try: 
         answer: str = data.answer
