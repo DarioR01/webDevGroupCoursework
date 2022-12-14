@@ -51,8 +51,7 @@ def get_list_of_items(request: HttpRequest):
     for item in items:
         serialised_item: dict[str, str | int | User | List] = serialise_item(item)
         items_serialised.update({item.id: serialised_item})
-
-    return items_serialised
+    return JsonResponse(items_serialised)
 
 
 def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
