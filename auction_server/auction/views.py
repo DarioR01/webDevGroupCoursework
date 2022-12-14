@@ -7,7 +7,7 @@ from typing import Dict
 from datetime import datetime
 from .utils import *
 
-from .models import User, Item, Image
+from .models import User, Item 
 
 def user_login(request: HttpRequest):
     if request.method == 'POST':
@@ -66,8 +66,7 @@ def user_logout(request: HttpRequest):
 def home(request: HttpRequest):
     if request.method == 'GET':
         items: Dict [any][any] = get_list_of_items(request)
-        return JsonResponse(items)
-
+        return items
 
 def item_page(request: HttpRequest, item_id:int):
     #check that item passed in url is an item and can be retrieved
@@ -79,45 +78,54 @@ def item_page(request: HttpRequest, item_id:int):
     # get item for item page
     if request.method == 'GET':
         body: JsonResponse = build_response_body_for_get_item(item)
-        return HttpResponse(body)
+        return body
 
     # update item's highest bidder and new price
     if request.method == 'PUT':
         updated_item: HttpResponseBadRequest | JsonResponse = update_item_highest_bidder_and_price(request, item)
-        return HttpResponse(updated_item)
+        return updated_item
 
     # post a new question for an item
     if request.method == 'POST':
         updated_question: HttpResponseBadRequest | JsonResponse = post_question_for_item(request, item)
-        return HttpResponse(updated_question)
+        return updated_question
 
 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
     if request.method == 'PUT':
         updated_question: HttpResponseBadRequest | JsonResponse = post_answer_for_question(request, item_id, question_id)
-        return HttpResponse(updated_question)
+        return updated_question
 
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 def profile_page(request: HttpRequest):
     if request.method == 'GET':
         user: JsonResponse = build_response_body_for_get_user(request)
-        return HttpResponse(user)
+        return user
 
     if request.method == 'PUT':
         updated_profile: HttpResponseBadRequest | JsonResponse = updated_profile_page(request)
-        return HttpResponse(updated_profile)
+        return updated_profile
     
     if request.method == 'POST':
-        new_item: Item = post_new_item(request)
-        return HttpResponse(new_item)
-    
+        #TODO find better way to get 'multipart/form-data' value out of Content-type
+        content_type = request.headers["Content-type"][:19]
 
-def upload_image(request: HttpRequest):
+        if content_type == "multipart/form-data":
+            image: str = edit_user_profile_upload_image(request)
+            return image
+
+        else:
+            new_item: Item = post_new_item(request)
+            return new_item
+
+
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt     
+def upload_item_image(request: HttpRequest, item_id: int):
     if request.method == 'POST':
-        image = request.FILES.get("file")
-        image: Image = Image.objects.create(
-                title = "The title",
-                image = image,
-            )
-        image.save()
-        return HttpResponse("Success. A new question was created")
+        image_name = post_new_item_upload_image(request, item_id)
+    return HttpResponse(image_name)
+
+
 

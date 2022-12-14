@@ -28,5 +28,5 @@ urlpatterns = [
     path('item/<int:item_id>', views.item_page, name='item page'),
     path('item/<int:item_id>/<int:question_id>', views.question_answer, name='question answer'),
     path('profile/', views.profile_page, name='profile profile'),
-    path('image/', views.upload_image, name='image upload'),
+    path('profile/<int:item_id>', views.upload_item_image, name='profile profile'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

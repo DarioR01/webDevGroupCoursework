@@ -198,6 +198,7 @@ def post_answer_for_question(request: HttpRequest, item_id: int, question_id: in
 def serialise_user(user: User):
     #build JSON serialisable user object
     serialised_user : Dict[str][any] = {
+        "id": user.id,
         "email": user.email,
         "name": user.name,
         "surname": user.surname,
@@ -325,3 +326,19 @@ def convert_string_date_to_date(string_date: str):
 def is_valid_final_date(date):
     # check if date argument is a future date, returns boolean
     return date > datetime.now()
+
+def edit_user_profile_upload_image(request: HttpRequest):
+    #get user id from the session
+    session_data = request.session
+    user_id: int = session_data.get('_auth_user_id')
+
+    user: User = get_user(user_id)
+    image = request.FILES.get('file')
+    user.image = image
+    return JsonResponse({"image": image.name})
+
+def post_new_item_upload_image(request: HttpRequest, item_id: int):
+    item: Item = get_item(item_id)
+    image = request.FILES.get('file')
+    item.image = image
+    return JsonResponse({"image": image.name})

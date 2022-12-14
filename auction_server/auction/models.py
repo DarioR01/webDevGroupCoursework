@@ -1,3 +1,4 @@
+from enum import Enum
 from django.db import models
 from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
@@ -31,7 +32,7 @@ class User(AbstractUser):
     email           = models.EmailField(max_length=254, unique=True, editable=True)
     name            = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
     surname         = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
-    # image           = models.ImageField(upload_to='profile_pic', default='default.jpg', editable=True)
+    image           = models.ImageField(upload_to='profile_pic', null=True, default='default.jpg', editable=True)
     date_of_birth   = models.DateField(default=datetime.date.today, editable=True)
 
     USERNAME_FIELD = 'email'
@@ -49,7 +50,6 @@ class User(AbstractUser):
             'email'         : self.email,
             'name'          : self.name,
             'surname'       : self.surname,
-            # 'image'         : self.image,
             'date_of_birth' : self.date_of_birth,
             'password'      : self.password,
         }
@@ -80,7 +80,7 @@ class Item(models.Model):
     title = models.CharField(max_length=30, editable=True)
     description = models.CharField(max_length=144, editable=True)
     price = models.IntegerField(editable=True)
-    #picture = models.ImageField(upload_to='./item_uploads', editable=True)
+    image = models.ImageField(upload_to='./static', null=True, editable=True)
     final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
     highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('auction.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
@@ -95,18 +95,8 @@ class Item(models.Model):
             'title'             : self.title,
             'description'       : self.description,
             'price'             : self.price,
-            #'picture'           : self.picture,
             'final_date'         : self.final_date,
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
         }
 
-class Image(models.Model):
-    title = models.CharField(max_length=200)
-    image = models.ImageField(upload_to='auction/static')
-
-    def __str__(self):
-        return self.title
-        
-
-   
