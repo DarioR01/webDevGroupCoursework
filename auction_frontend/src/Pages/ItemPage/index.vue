@@ -149,7 +149,8 @@ export default {
                     })
                 });
                 if (response.status === 200) {
-                    this.questions.push({ question: this.new_question })
+                    const data: Question = await response.json()
+                    this.questions.push(data)
                     this.new_question = ""
                 }
                 else {
@@ -163,7 +164,7 @@ export default {
 
         async answer(question_id: string | undefined, index: number) {
             const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}/${question_id}`, {
-                method: 'POST',
+                method: 'PUT',
                 credentials: "include",
                 mode: "cors",
                 referrerPolicy: "no-referrer",
@@ -172,7 +173,9 @@ export default {
                 },
                 body: JSON.stringify({ answer: this.new_answer[index] }),
             });
-            this.questions[index].answer = this.new_answer[index]
+            console.log(response.status)
+            if (response.status === 200) this.questions[index].answer = this.new_answer[index]
+            if (response.status === 400) alert("Cannot answer question, You are not the owner of this item")
         },
     }
 }
