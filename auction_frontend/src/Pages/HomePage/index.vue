@@ -12,7 +12,7 @@ import Item from '../../components/Item/index.vue'
     <ul class="row row-cols-auto g-5 justify-content-md-center">
       <li class="col list-unstyled" v-for="item in items">
         <Item :id="item.id" :title="item.title" :description="item.description" :price=item.price :time=item.time
-          :image="item.img" />
+          :image="`http://localhost:8000/static/${item.image_name}`" />
       </li>
     </ul>
 

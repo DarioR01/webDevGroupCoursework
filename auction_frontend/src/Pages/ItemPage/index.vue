@@ -22,7 +22,8 @@ interface Item {
             <div class="row g-0">
 
                 <picture class="col-md-4">
-                    <img src="http://localhost:8000/static/default.jpg" alt="Image depicting the item" />
+                    <img class="img-fluid" :src="`http://localhost:8000/static/${item.image_name}`"
+                        alt="Image depicting the item" />
                 </picture>
 
                 <div class="col-md-8">
@@ -107,6 +108,7 @@ export default {
             });
             const item = await response.json();
             this.item = item;
+            console.log(item)
             const questions: Array<Question> = Object.values(item.questions);
             this.questions = questions;
         },
