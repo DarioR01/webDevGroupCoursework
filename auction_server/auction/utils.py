@@ -170,25 +170,36 @@ def post_answer_for_question(request: HttpRequest, item_id: int, question_id: in
     uid: int = session_data.get('_auth_user_id')
 
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
+
+    try:
+        user: User = get_user(uid)
+        user: User = user.to_dict()
+    except:
+        return HttpResponseBadRequest("Could not find item owner", status=400)
     
     # get values from request to update question object
     try: 
         answer: str = data.answer
     except:
-        return HttpResponseBadRequest("Could not update question. Check that the request contains the answer")
+        return HttpResponseBadRequest("Could not update question. Check that the request contains the answer", status=400)
 
     #check that item passed in url is an item and can be retrieved
     try:
         item: Item = get_item(item_id)
+        item_dict: Item = item.to_dict()
+        owner: User = item_dict["owner"]
+        owner: User = owner.to_dict()
     except: 
-        return HttpResponseBadRequest("No item found")
+        return HttpResponseBadRequest("No item found", status=400)
 
     #check that question passed in url is a question for that item and can be retrieved
     try:
         question: Question = get_question_for_item(item, question_id)
     except:
-        return HttpResponseBadRequest("No question found")
- 
+        return HttpResponseBadRequest("No question found", status=400)
+    
+    if(user["id"] != owner["id"]):
+        return HttpResponseBadRequest("Not item's owner", status=400)
     question.answer = answer
     question.save()
 
