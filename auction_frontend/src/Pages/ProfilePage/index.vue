@@ -11,14 +11,16 @@ interface User {
   <div class="container mb-5">
     <div class="row">
       <div class="col-md-3">
-        <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class=" mt-10" width="150px" 
+        <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class=" mt-10"
+            width="150px"
             src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
 
 
         </div>
         <div>
-          <span class="font-weight-bold">{{ details.name }}</span><span class="text-black-50">{{details.surname}}</span><span><span
-              class="text-black-50">{{details.email}}</span> </span>
+          <span class="font-weight-bold">{{ details.name }}</span><span
+            class="text-black-50">{{ details.surname }}</span><span><span class="text-black-50">{{ details.email }}</span>
+          </span>
         </div>
 
       </div>
@@ -33,10 +35,10 @@ interface User {
             </div>
             <div class="row mt-3">
               <div class="col-md-6"><label></label>
-                <input type="text" class="form-control" placeholder="first name" >
-                </div>
-              <div class="col-md-6"><label>Surname</label><input type="text" class="form-control"
-                  placeholder="surname"></div>
+                <input type="text" class="form-control" placeholder="first name">
+              </div>
+              <div class="col-md-6"><label>Surname</label><input type="text" class="form-control" placeholder="surname">
+              </div>
               <div class="col-md-6"><label>DOB</label>
                 <input type="text" class="form-control" placeholder="date of birth">
               </div>
@@ -45,7 +47,7 @@ interface User {
             <div class="row mt-6">
               <div class="col-md-6">
                 <label>Email </label>
-                <input type="text" class="form-control"  placeholder="enter email address" value="">
+                <input type="text" class="form-control" placeholder="enter email address" value="">
               </div>
             </div>
             <div class="mt-3"><button class="btn btn-primary profile-button" type="button"> Save Profile </button></div>
@@ -132,45 +134,46 @@ p {
   font-weight: bold;
 }
 
-.img-container{
-  border:1px solid
+.img-container {
+  border: 1px solid
 }
 </style>
 
 <script lang="ts">
 export default {
-    data() {
-        return {
-          details:this.get_details()
+  data() {
+    return {
+      details: this.get_details()
 
-        }
+    }
+  },
+
+  methods: {
+
+
+    async get_details() {
+      const response = await fetch("http://localhost:8000/profile", {
+        method: 'GET',
+        credentials: "include",
+        mode: "cors",
+        referrerPolicy: "no-referrer",
+      });
+      const details = await response.json();
+      this.details = details;
     },
 
-    methods: {
+    async edit() {
+      const response = await fetch(`http://localhost:8000/edit_user}`, {
+        method: 'POST',
+        credentials: "include",
+        mode: "cors",
+        referrerPolicy: "no-referrer",
+      });
+    },
 
-
-      async get_details(){
-            const response = await fetch("http://localhost:8000/profile", {
-                method: 'GET',
-                credentials: "include",
-                mode: "cors",
-                referrerPolicy: "no-referrer",
-            });
-            const details = await response.json();
-            this.details = details;
-        },
-
-        async edit() {
-            const response = await fetch(`http://localhost:8000/edit_user}`, {
-                method: 'POST',
-                credentials: "include",
-                mode: "cors",
-                referrerPolicy: "no-referrer",
-            });
-        },
-
-
-        
-}
+    async item() {
+      return
+    }
+  }
 }
 </script>
