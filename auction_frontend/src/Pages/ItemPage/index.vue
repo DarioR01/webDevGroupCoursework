@@ -115,13 +115,13 @@ export default {
 
         async bid() {
             if (this.item.price < this.new_price) {
+                const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
                 const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}`, {
                     method: 'PUT',
                     credentials: "include",
                     mode: "cors",
-                    contentType: 'multipart/form-data',
                     referrerPolicy: "no-referrer",
-                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    headers,
                     body: JSON.stringify({
                         price: this.new_price
                     })
@@ -140,12 +140,13 @@ export default {
 
         async ask() {
             if (this.new_question != null) {
+                const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
                 const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}`, {
                     method: 'POST',
                     credentials: "include",
                     mode: "cors",
                     referrerPolicy: "no-referrer",
-                    headers: { 'X-CSRFToken': getCookie('csrftoken') },
+                    headers,
                     body: JSON.stringify({
                         question: this.new_question
                     })
@@ -165,14 +166,13 @@ export default {
         },
 
         async answer(question_id: string | undefined, index: number) {
+            const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
             const response = await fetch(`http://localhost:8000/item/${this.$route.params.id}/${question_id}`, {
                 method: 'PUT',
                 credentials: "include",
                 mode: "cors",
                 referrerPolicy: "no-referrer",
-                headers: {
-                    'X-CSRFToken': getCookie('csrftoken'),
-                },
+                headers,
                 body: JSON.stringify({ answer: this.new_answer[index] }),
             });
             console.log(response.status)

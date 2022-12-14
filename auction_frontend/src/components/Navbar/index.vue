@@ -34,21 +34,21 @@ import { getCookie } from '../../utility'
 export default {
   data() {
     return {
-      isLoggedIn: getCookie('login')
+      isLoggedIn: getCookie('login') as string
     }
   },
   methods: {
     async logout(e: { preventDefault: () => void; }) {
       e.preventDefault();
-      const csrftoken = getCookie("csrftoken");
+      const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
       const response = await fetch('http://localhost:8000/logout/', {
         method: 'POST',
-        headers: { 'X-CSRFToken': csrftoken },
+        headers,
         credentials: "include",
         mode: "cors",
         referrerPolicy: "no-referrer",
       });
-      this.isLoggedIn = response.status === 200 ? null : this.isLoggedIn
+      this.isLoggedIn = response.status === 200 ? "" : this.isLoggedIn
     },
   }
 }

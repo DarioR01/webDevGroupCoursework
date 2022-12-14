@@ -1,4 +1,4 @@
-export const getCookie = (name: string): string | null => {
+export const getCookie = (name: string): string => {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
       const cookies = document.cookie.split(';');
@@ -10,5 +10,6 @@ export const getCookie = (name: string): string | null => {
         }
       }
     }
+    cookieValue = cookieValue || ""
     return cookieValue;
 }
