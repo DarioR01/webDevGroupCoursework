@@ -31,17 +31,17 @@ def get_all_questions_for_item(id:int):
 def get_list_of_items(request: HttpRequest):
     #if in the request is present a filter key, get list of filtered items
     try: 
-        data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
-
         # filter items using the filter key if contained in title or description
-        filter_keyword: str = data.filter
-        items: List = Item.objects.filter(
-            Q(title__contains=filter_keyword) |
-            Q(description__contains=filter_keyword)
+        filter_keyword: str = request.GET.get('filter')
+        if filter_keyword:
+            items: List = Item.objects.filter(
+                Q(title__contains=filter_keyword) |
+                Q(description__contains=filter_keyword)
         )
+        else:
+            items: List = Item.objects.all()
     except:
-        # if no filter, get all the items
-        items: List = Item.objects.all()
+        return HttpResponseBadRequest("Could not retrieve the items for the home page")
 
     items_serialised: Dict [any][any] = {}
     for item in items:
