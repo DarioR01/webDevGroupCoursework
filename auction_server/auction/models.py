@@ -32,7 +32,7 @@ class User(AbstractUser):
     email           = models.EmailField(max_length=254, unique=True, editable=True)
     name            = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
     surname         = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
-    image           = models.ImageField(upload_to='./static', null=True, default='default.jpg', editable=True)
+    image           = models.ImageField(upload_to='./static', default= "./static/default.jpg", null=True, editable=True)
     date_of_birth   = models.DateField(default=datetime.date.today, editable=True)
     image_name      = models.CharField(max_length=30, null=True, editable=True)
 
@@ -82,7 +82,7 @@ class Item(models.Model):
     title = models.CharField(max_length=30, editable=True)
     description = models.CharField(max_length=144, editable=True)
     price = models.IntegerField(editable=True)
-    image = models.ImageField(upload_to='./static', null=True, editable=True)
+    image = models.ImageField(upload_to='./static', default="./static/default_item.jpg", null=True, editable=True)
     image_name = models.CharField(max_length=30, null=True, editable=True)
     final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
     highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
