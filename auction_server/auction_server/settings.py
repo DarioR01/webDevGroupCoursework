@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'auction.apps.AuctionConfig',
     'corsheaders',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -139,3 +141,14 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CORS_ALLOW_CREDENTIALS = True
+
+CRONJOBS = [
+    ('* * * * *', 'auction.cron.send_emails','>> ' + os.path.join(BASE_DIR,'auction/log/debug7.log' + ' 2>&1 '))
+]
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = "webdevproject26@gmail.com"
+EMAIL_HOST_PASSWORD = "humvaxptmlwsdjdp"

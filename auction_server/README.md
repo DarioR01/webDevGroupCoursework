@@ -11,6 +11,9 @@ Django Admin view has been implemented with a superuser with the following login
 - email `admin@gmail.com`
 - password `admin`
 
+### Testing the backend in local env
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 
 ### **Integration with frontend in local env**
 
