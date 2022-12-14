@@ -214,7 +214,13 @@ def serialise_user(user: User):
         "name": user.name,
         "surname": user.surname,
         "date_of_birth": user.date_of_birth,
+        "image_name": ""
     }
+
+    # if there is an image for a user, then it should be returned
+    if user.image_name: 
+        serialised_user['image_name'] = user.image_name
+        
     return serialised_user
 
 def serialise_item(item: Item):
@@ -244,10 +250,16 @@ def serialise_item(item: Item):
         "description": item.description,
         "price": item.price,
         "finale_date": item.final_date,
+        "image_name": "",
         "highest_bidder": highest_bidder,
         "owner": owner,
         "questions": questions
     }
+    
+    # if there is an image for the item, then it should be returned
+    if item.image_name: 
+        serialised_item['image_name'] = item.image_name
+
     return serialised_item
 
 def serialise_question(question: Question):
@@ -346,10 +358,14 @@ def edit_user_profile_upload_image(request: HttpRequest):
     user: User = get_user(user_id)
     image = request.FILES.get('file')
     user.image = image
-    return JsonResponse({"image": image.name})
+    user.image_name = image.name
+    user.save()
+    return JsonResponse({"image": user.image_name})
 
 def post_new_item_upload_image(request: HttpRequest, item_id: int):
     item: Item = get_item(item_id)
     image = request.FILES.get('file')
     item.image = image
-    return JsonResponse({"image": image.name})
+    item.image_name = image.name
+    item.save()
+    return JsonResponse({"image": item.image_name})

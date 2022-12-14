@@ -34,6 +34,8 @@ class User(AbstractUser):
     surname         = models.CharField(max_length=30, default = uuid.uuid4, editable=True)
     image           = models.ImageField(upload_to='profile_pic', null=True, default='default.jpg', editable=True)
     date_of_birth   = models.DateField(default=datetime.date.today, editable=True)
+    image_name      = models.CharField(max_length=30, null=True, editable=True)
+
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
@@ -51,7 +53,7 @@ class User(AbstractUser):
             'name'          : self.name,
             'surname'       : self.surname,
             'date_of_birth' : self.date_of_birth,
-            'password'      : self.password,
+            'image_name'    : self.image_name,
         }
 
 class Question(models.Model):
@@ -81,6 +83,7 @@ class Item(models.Model):
     description = models.CharField(max_length=144, editable=True)
     price = models.IntegerField(editable=True)
     image = models.ImageField(upload_to='./static', null=True, editable=True)
+    image_name = models.CharField(max_length=30, null=True, editable=True)
     final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
     highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('auction.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
@@ -95,6 +98,7 @@ class Item(models.Model):
             'title'             : self.title,
             'description'       : self.description,
             'price'             : self.price,
+            'image_name'        : self.image_name,
             'final_date'         : self.final_date,
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,

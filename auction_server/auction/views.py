@@ -112,8 +112,8 @@ def profile_page(request: HttpRequest):
         content_type = request.headers["Content-type"][:19]
 
         if content_type == "multipart/form-data":
-            image: str = edit_user_profile_upload_image(request)
-            return image
+            image_name: str = edit_user_profile_upload_image(request)
+            return image_name
 
         else:
             new_item: Item = post_new_item(request)
@@ -124,8 +124,8 @@ from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt     
 def upload_item_image(request: HttpRequest, item_id: int):
     if request.method == 'POST':
-        image_name = post_new_item_upload_image(request, item_id)
-    return HttpResponse(image_name)
+        image_name: str = post_new_item_upload_image(request, item_id)
+    return image_name
 
 
 
