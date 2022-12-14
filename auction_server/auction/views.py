@@ -62,13 +62,15 @@ def user_logout(request: HttpRequest):
         return response
     return Http404()
 
-
-def home(request: HttpRequest):
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
+def home(request: HttpRequest, filter: None = None):
     if request.method == 'GET':
-        items: HttpResponseBadRequest | dict = get_list_of_items(request)
+        items: HttpResponseBadRequest | dict = get_list_of_items(request, filter)
         return items
 
-
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 def item_page(request: HttpRequest, item_id:int):
     #check that item passed in url is an item and can be retrieved
     try:
@@ -91,7 +93,8 @@ def item_page(request: HttpRequest, item_id:int):
         updated_question: HttpResponseBadRequest | JsonResponse = post_question_for_item(request, item)
         return updated_question
 
-
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 def question_answer(request: HttpRequest, item_id: int, question_id: int):
     if request.method == 'PUT':
         updated_question: HttpResponseBadRequest | JsonResponse = post_answer_for_question(request, item_id, question_id)
