@@ -11,12 +11,18 @@ interface User {
   <div class="container mb-5">
     <div class="row">
       <div class="col-md-3">
-        <div class="d-flex flex-column p-4 py-6 align-items-center text-center "><img class=" mt-10" width="150px"
-            src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg"><span
-            class="font-weight-bold">Yanitsa Stancheva</span><span class="text-black-50">DOB</span><span><span
-              class="text-black-50">example@mail.com.my</span> </span>
+        <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class=" mt-10" width="150px" 
+            src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+
+
         </div>
+        <div>
+          <span class="font-weight-bold">{{ details.name }}</span><span class="text-black-50">{{details.surname}}</span><span><span
+              class="text-black-50">{{details.email}}</span> </span>
+        </div>
+
       </div>
+
 
       <div class="col-md-5 border-right">
         <form class="form-outline" @submit.prevent="edit">
@@ -26,7 +32,7 @@ interface User {
               <h4 class="text-right">Edit Profile</h4>
             </div>
             <div class="row mt-3">
-              <div class="col-md-6"><label>Name</label>
+              <div class="col-md-6"><label></label>
                 <input type="text" class="form-control" placeholder="first name" >
                 </div>
               <div class="col-md-6"><label>Surname</label><input type="text" class="form-control"
@@ -125,32 +131,33 @@ interface User {
 p {
   font-weight: bold;
 }
+
+.img-container{
+  border:1px solid
+}
 </style>
 
 <script lang="ts">
 export default {
     data() {
         return {
-            item: this.getItems(),
-            questions: [] as Array<Question>,
-            new_price: 0,
-            new_question: "",
-            new_answer: [],
-            question_id: "",
-            file: {},
+          details:this.get_details()
+
         }
     },
 
     methods: {
 
 
-      async get_details() {
-            const response = await fetch(`http://localhost:8000/edit_user}`, {
+      async get_details(){
+            const response = await fetch("http://localhost:8000/profile", {
                 method: 'GET',
                 credentials: "include",
                 mode: "cors",
                 referrerPolicy: "no-referrer",
             });
+            const details = await response.json();
+            this.details = details;
         },
 
         async edit() {
@@ -164,5 +171,6 @@ export default {
 
 
         
+}
 }
 </script>
