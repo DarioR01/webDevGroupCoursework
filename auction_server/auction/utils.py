@@ -15,18 +15,22 @@ def get_user(user_id:int):
     user: User = User.objects.filter(pk=user_id).get()
     return user
 
+
 def get_item(item_id:int):
     item: Item = Item.objects.filter(id=item_id).get()
     return item
+
 
 def get_question_for_item(item:Item, question_id: int):
     question: Question = Question.objects.filter(item = item, id = question_id).get()
     return question
 
+
 def get_all_questions_for_item(id:int):
     item: Item = Item.objects.filter(id=id).get()
     questions: List = Question.objects.all().filter(item = item)
     return questions
+
 
 def get_list_of_items(request: HttpRequest):
     #if in the request is present a filter key, get list of filtered items
@@ -49,6 +53,7 @@ def get_list_of_items(request: HttpRequest):
         items_serialised.update({item.id: serialised_item})
 
     return items_serialised
+
 
 def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
     #get user id from the session
@@ -77,6 +82,7 @@ def update_item_highest_bidder_and_price(request: HttpRequest, item: Item):
 
     serialised_item: dict[str, str | int | User | List] = serialise_item(item)
     return JsonResponse(serialised_item)
+
 
 def updated_profile_page(request: HttpRequest):
     #get user id from the session
@@ -108,6 +114,7 @@ def updated_profile_page(request: HttpRequest):
     serialised_user: dict[str, str | date] = serialise_user(user)
     return JsonResponse(serialised_user)
     
+
 def post_question_for_item(request: HttpRequest, item: Item):
     #get user id from the session
     session_data = request.session
@@ -137,6 +144,7 @@ def post_question_for_item(request: HttpRequest, item: Item):
     serialised_question = serialise_question(question)
     return JsonResponse(serialised_question)
 
+
 def post_new_item(request: HttpRequest):
     #get user id from the session
     session_data = request.session
@@ -164,6 +172,7 @@ def post_new_item(request: HttpRequest):
     serialised_item: dict[str, str | int | User | List] = serialise_item(item)
     return JsonResponse(serialised_item)
     
+
 def post_answer_for_question(request: HttpRequest, item_id: int, question_id: int):
     #get user id from the session
     session_data = request.session
@@ -206,6 +215,7 @@ def post_answer_for_question(request: HttpRequest, item_id: int, question_id: in
     serialised_question = serialise_question(question)
     return JsonResponse(serialised_question)
 
+
 def serialise_user(user: User):
     #build JSON serialisable user object
     serialised_user : Dict[str][any] = {
@@ -222,6 +232,7 @@ def serialise_user(user: User):
         serialised_user['image_name'] = user.image_name
         
     return serialised_user
+
 
 def serialise_item(item: Item):
     #get owner fields
@@ -262,6 +273,7 @@ def serialise_item(item: Item):
 
     return serialised_item
 
+
 def serialise_question(question: Question):
     #get objects owner, user from foreign keys
     owner: User = question.owner.to_dict()
@@ -284,6 +296,7 @@ def serialise_question(question: Question):
 
     return question_object
 
+
 def build_questions_list(questions: List):
     #build list of JSON serialised item objects
     questions_serialised: Dict [any][any] = {}
@@ -293,10 +306,12 @@ def build_questions_list(questions: List):
 
     return questions_serialised
 
+
 def build_response_body_for_get_item(item: Item):
     # build JSON serialisable item object
     serialised_item = serialise_item(item)
     return JsonResponse(serialised_item)
+
 
 def build_response_body_for_get_user(request):
     #get user id from the session
@@ -309,6 +324,7 @@ def build_response_body_for_get_user(request):
     serialised_user = serialise_user(user)
     return JsonResponse(serialised_user)
 
+
 def create_new_question(question: str, owner: User, user: User, item: Item, answer: str = None):
     #create new uestion object
     question: Question = Question(
@@ -320,6 +336,7 @@ def create_new_question(question: str, owner: User, user: User, item: Item, answ
     )
     question.save()
     return question
+
 
 def create_new_item(title, description, price, final_date, owner_id):
     #get owner 
@@ -337,6 +354,7 @@ def create_new_item(title, description, price, final_date, owner_id):
 
     return item
 
+
 def convert_string_date_to_date(string_date: str):
     #yyyy-mm-dd 
     regex = r"^(?:(?:1[6-9]|[2-9]\d)?\d{2})(?:(?:(\/|-|\.)(?:0?[13578]|1[02])\1(?:31))|(?:(\/|-|\.)(?:0?[13-9]|1[0-2])\2(?:29|30)))$|^(?:(?:(?:1[6-9]|[2-9]\d)?(?:0[48]|[2468][048]|[13579][26])|(?:(?:16|[2468][048]|[3579][26])00)))(\/|-|\.)0?2\3(?:29)$|^(?:(?:1[6-9]|[2-9]\d)?\d{2})(\/|-|\.)(?:(?:0?[1-9])|(?:1[0-2]))\4(?:0?[1-9]|1\d|2[0-8])$"
@@ -346,9 +364,11 @@ def convert_string_date_to_date(string_date: str):
         date = parse_datetime(string_date)
         return date
 
+
 def is_valid_final_date(date):
     # check if date argument is a future date, returns boolean
     return date > datetime.now()
+
 
 def edit_user_profile_upload_image(request: HttpRequest):
     #get user id from the session
@@ -361,6 +381,7 @@ def edit_user_profile_upload_image(request: HttpRequest):
     user.image_name = image.name
     user.save()
     return JsonResponse({"image": user.image_name})
+
 
 def post_new_item_upload_image(request: HttpRequest, item_id: int):
     item: Item = get_item(item_id)

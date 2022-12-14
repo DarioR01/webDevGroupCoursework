@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest, FileResponse
+from django.http import HttpRequest, HttpResponseRedirect, Http404, HttpResponse, JsonResponse, HttpResponseBadRequest
 from django.contrib.auth import authenticate, login, logout
 from .forms import UserRegistration, UserLogin
 
@@ -65,8 +65,9 @@ def user_logout(request: HttpRequest):
 
 def home(request: HttpRequest):
     if request.method == 'GET':
-        items: Dict [any][any] = get_list_of_items(request)
+        items: HttpResponseBadRequest | dict = get_list_of_items(request)
         return items
+
 
 def item_page(request: HttpRequest, item_id:int):
     #check that item passed in url is an item and can be retrieved
@@ -96,8 +97,7 @@ def question_answer(request: HttpRequest, item_id: int, question_id: int):
         updated_question: HttpResponseBadRequest | JsonResponse = post_answer_for_question(request, item_id, question_id)
         return updated_question
 
-from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt 
+
 def profile_page(request: HttpRequest):
     if request.method == 'GET':
         user: JsonResponse = build_response_body_for_get_user(request)
@@ -109,7 +109,7 @@ def profile_page(request: HttpRequest):
     
     if request.method == 'POST':
         #TODO find better way to get 'multipart/form-data' value out of Content-type
-        content_type = request.headers["Content-type"][:19]
+        content_type: str = request.headers["Content-type"][:19]
 
         if content_type == "multipart/form-data":
             image_name: str = edit_user_profile_upload_image(request)
@@ -119,9 +119,7 @@ def profile_page(request: HttpRequest):
             new_item: Item = post_new_item(request)
             return new_item
 
-
-from django.views.decorators.csrf import csrf_exempt
-@csrf_exempt     
+ 
 def upload_item_image(request: HttpRequest, item_id: int):
     if request.method == 'POST':
         image_name: str = post_new_item_upload_image(request, item_id)
