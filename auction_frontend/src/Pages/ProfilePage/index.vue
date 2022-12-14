@@ -18,8 +18,8 @@ interface User {
 
         </div>
         <div>
-          <span class="font-weight-bold">{{ details.name }}</span><span
-            class="text-black-50">{{ details.surname }}</span><span><span class="text-black-50">{{ details.email }}</span>
+          <span class="font-weight-bold">{{ details.name }}</span><span class="text-black-50">{{ details.surname
+          }}</span><span><span class="text-black-50">{{ details.email }}</span>
           </span>
         </div>
 
@@ -152,7 +152,7 @@ export default {
 
 
     async get_details() {
-      const response = await fetch("http://localhost:8000/profile", {
+      const response = await fetch("http://localhost:8000/api/profile", {
         method: 'GET',
         credentials: "include",
         mode: "cors",
@@ -163,7 +163,7 @@ export default {
     },
 
     async edit() {
-      const response = await fetch(`http://localhost:8000/edit_user}`, {
+      const response = await fetch(`http://localhost:8000/api/edit_user}`, {
         method: 'POST',
         credentials: "include",
         mode: "cors",

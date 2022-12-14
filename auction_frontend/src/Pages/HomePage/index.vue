@@ -30,7 +30,7 @@ export default {
 
   methods: {
     async getItems() {
-      const response = await fetch(`http://localhost:8000/home/`, {
+      const response = await fetch(`http://localhost:8000/api/home/`, {
         method: 'GET',
         credentials: "include",
         mode: "cors",
@@ -43,7 +43,7 @@ export default {
 
     async getFilter() {
       console.log(this.filter)
-      const response = await fetch(`http://localhost:8000/home/?filter=${this.filter}`, {
+      const response = await fetch(`http://localhost:8000/api/home/?filter=${this.filter}`, {
         method: 'GET',
         credentials: "include",
         mode: "cors",

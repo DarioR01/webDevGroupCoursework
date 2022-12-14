@@ -20,13 +20,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
-    path('login/', views.user_login, name='login'),
-    path('registration/', views.registration, name='registration'),
-    path('logout/', views.user_logout, name='logout'),
-    path('home/', views.home, name='home page'),
-    re_path(r'^home/(?P<filter>\w+)/$', views.home, name='filter'),
-    path('item/<int:item_id>', views.item_page, name='item page'),
-    path('item/<int:item_id>/<int:question_id>', views.question_answer, name='question answer'),
-    path('profile/', views.profile_page, name='profile profile'),
-    path('profile/<int:item_id>', views.upload_item_image, name='profile profile'),
+    path('api/login/', views.user_login, name='login'),
+    path('api/registration/', views.registration, name='registration'),
+    path('api/logout/', views.user_logout, name='logout'),
+    path('api/home/', views.home, name='home page'),
+    re_path(r'^api/home/(?P<filter>\w+)/$', views.home, name='filter'),
+    path('api/item/<int:item_id>', views.item_page, name='item page'),
+    path('api/item/<int:item_id>/<int:question_id>', views.question_answer, name='question answer'),
+    path('api/profile/', views.profile_page, name='profile profile'),
+    path('api/profile/<int:item_id>', views.upload_item_image, name='profile profile'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

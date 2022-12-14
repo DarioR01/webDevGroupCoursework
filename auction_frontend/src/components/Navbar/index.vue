@@ -21,9 +21,9 @@ import { getCookie } from '../../utility'
           </li>
         </ul>
 
-        <button v-if="(isLoggedIn !== null)" class="btn btn-outline-success" type="button"
+        <button v-if="(isLoggedIn !== '')" class="btn btn-outline-success" type="button"
           v-on:click="logout">Logout</button>
-        <a v-else class="btn btn-outline-success" type="button" href="http://localhost:8000/login">Login</a>
+        <a v-else class="btn btn-outline-success" type="button" href="http://localhost:8000/api/login">Login</a>
       </div>
     </div>
   </nav>
@@ -41,7 +41,7 @@ export default {
     async logout(e: { preventDefault: () => void; }) {
       e.preventDefault();
       const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-      const response = await fetch('http://localhost:8000/logout/', {
+      const response = await fetch('http://localhost:8000/api/logout/', {
         method: 'POST',
         headers,
         credentials: "include",
