@@ -32,11 +32,10 @@ def get_all_questions_for_item(id:int):
     return questions
 
 
-def get_list_of_items(request: HttpRequest):
+def get_list_of_items(request: HttpRequest, filter_keyword: str):
     #if in the request is present a filter key, get list of filtered items
     try: 
         # filter items using the filter key if contained in title or description
-        filter_keyword: str = request.GET.get('filter')
         if filter_keyword:
             items: List = Item.objects.filter(
                 Q(title__contains=filter_keyword) |
