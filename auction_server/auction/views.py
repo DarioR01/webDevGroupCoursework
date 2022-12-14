@@ -97,7 +97,8 @@ def question_answer(request: HttpRequest, item_id: int, question_id: int):
         updated_question: HttpResponseBadRequest | JsonResponse = post_answer_for_question(request, item_id, question_id)
         return updated_question
 
-
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 def profile_page(request: HttpRequest):
     if request.method == 'GET':
         user: JsonResponse = build_response_body_for_get_user(request)
@@ -119,7 +120,8 @@ def profile_page(request: HttpRequest):
             new_item: Item = post_new_item(request)
             return new_item
 
- 
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 def upload_item_image(request: HttpRequest, item_id: int):
     if request.method == 'POST':
         image_name: str = post_new_item_upload_image(request, item_id)
