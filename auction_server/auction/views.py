@@ -47,7 +47,7 @@ def registration(request: HttpRequest):
             )
             user.set_password(password)
             user.save()
-            return HttpResponseRedirect('/login/')
+            return HttpResponseRedirect('/api/login/')
     else:
         form: UserRegistration = UserRegistration()
 
