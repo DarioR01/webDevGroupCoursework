@@ -85,6 +85,7 @@ class Item(models.Model):
     image = models.ImageField(upload_to='./auction/static', default="./auction/static/default_item.jpg", null=True, editable=True)
     image_name = models.CharField(max_length=30, null=True, editable=True)
     final_date   = models.DateField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
+    email_sent = models.BooleanField(default=False, null=False, editable=True )
     highest_bidder = models.ForeignKey('auction.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('auction.User', related_name='owner_set_item' ,on_delete=models.CASCADE)
     
@@ -103,4 +104,7 @@ class Item(models.Model):
             'highest_bidder'     : self.highest_bidder,
             'owner'             : self.owner,
         }
+
+    def getSent(self):
+        return bool(self.email_sent)
 

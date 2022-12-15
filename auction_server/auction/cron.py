@@ -7,21 +7,26 @@ from django.conf import settings
 def send_emails():
     items: List = Item.objects.all()
     for item in items:
-        item: Item = item.to_dict()
-        if (item["final_date"] > datetime.date.today()):
+        item_dict: Item = item.to_dict()
+        if (item_dict["final_date"] < datetime.date.today()): 
+            if item.getSent():
+                continue
             try:
-                user: User = item["highest_bidder"]
+                user: User = item_dict["highest_bidder"]
                 if user:
                     user: User = user.to_dict()
-                    item_title: AnyStr = item["title"]
+                    item_title: AnyStr = item_dict["title"]
                     text = f"You won the bid for the item , go purchase {item_title} now!!!"
                     send_mail(
                         'You won the bid',
                         text,
                         settings.EMAIL_HOST_USER,
-                        [user['email']],
+                        #[user['email']],
+                        ['xodefo4522@dni8.com'],
                         fail_silently=False,
                     )
+                    item.email_sent = True
+                    item.save()
             except:
                 continue
         continue
