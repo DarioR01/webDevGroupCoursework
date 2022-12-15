@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'auction.apps.AuctionConfig',
     'corsheaders',
-    # 'django_crontab',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
