@@ -1,4 +1,6 @@
+
 <script lang="ts" setup>
+import { getCookie } from '../../utility'
 interface User {
   name: String;
   surname: String;
@@ -11,9 +13,8 @@ interface User {
   <div class="container mb-5">
     <div class="row">
       <div class="col-md-3">
-        <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class=" mt-10"
-            width="150px"
-            src="https://st3.depositphotos.com/15648834/17930/v/600/depositphotos_179308454-stock-illustration-unknown-person-silhouette-glasses-profile.jpg">
+        <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class="img-fluid"
+            :src="`http://localhost:8000/static/${details.image_name}`">
 
 
         </div>
@@ -34,24 +35,29 @@ interface User {
               <h4 class="text-right">Edit Profile</h4>
             </div>
             <div class="row mt-3">
-              <div class="col-md-6"><label></label>
-                <input type="text" class="form-control" placeholder="first name">
+              <div class="col-md-6"><label>Name</label>
+                <input type="text" class="form-control" v-model="name" placeholder="first name">
               </div>
-              <div class="col-md-6"><label>Surname</label><input type="text" class="form-control" placeholder="surname">
+              <div class="col-md-6"><label>Surname</label><input type="text" class="form-control" v-model="surname"
+                  placeholder="surname">
               </div>
               <div class="col-md-6"><label>DOB</label>
-                <input type="text" class="form-control" placeholder="date of birth">
+                <input type="date" class="form-control" v-model="dob" placeholder="date of birth">
+              </div>
+              <div class="col-md-6"><label>Password</label>
+                <!-- <input type="password" v-model="password" class="form-control" placeholder="password"> -->
               </div>
 
             </div>
             <div class="row mt-6">
-              <div class="col-md-6">
-                <label>Email </label>
-                <input type="text" class="form-control" placeholder="enter email address" value="">
-              </div>
+
             </div>
-            <div class="mt-3"><button class="btn btn-primary profile-button" type="button"> Save Profile </button></div>
+            <div class="mt-3"><button class="btn btn-primary profile-button" type="submit"> Save Profile </button></div>
           </div>
+        </form>
+        <form @submit.prevent="updateImg">
+          <input type="file" ref="file" @change="uploadFile" />
+          <button class="btn btn-primary profile-button" type="submit">Upload Image</button>
         </form>
       </div>
     </div>
@@ -88,44 +94,6 @@ interface User {
 
 
 
-  <div class="container py-5 ">
-    <div class="row  d-flex justify-content-center ">
-      <div class="col col-lg-9 col-xl-7">
-        <div class="card">
-
-
-          <div class="card-body p-4 text-black">
-            <h4 class="text-right">Items Listed By You</h4>
-            <div class="row g-2">
-              <div class="col mb-2">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(112).webp" alt="item 1"
-                  class="w-100 rounded-3">
-                <p class="card-text justify-content-center">£100</p>
-              </div>
-              <div class="col mb-2">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(107).webp" alt="item 2"
-                  class="w-100 rounded-3">
-                <p class="card-text justify-content-center">£100</p>
-              </div>
-            </div>
-            <div class="row g-2">
-              <div class="col">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(108).webp" alt="item 3"
-                  class="w-100 rounded-3">
-                <p class="card-text justify-content-center">£200</p>
-              </div>
-              <div class="col">
-                <img src="https://mdbcdn.b-cdn.net/img/Photos/Lightbox/Original/img%20(114).webp" alt="item 4"
-                  class="w-100 rounded-3">
-                <p class="card-text justify-content-center">£1K</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
 
 
 </template>
@@ -143,8 +111,12 @@ p {
 export default {
   data() {
     return {
-      details: this.get_details()
-
+      details: this.get_details(),
+      name: "",
+      surname: "",
+      dob: "",
+      // password: "",
+      file: {},
     }
   },
 
@@ -152,7 +124,7 @@ export default {
 
 
     async get_details() {
-      const response = await fetch("http://localhost:8000/api/profile", {
+      const response = await fetch("http://localhost:8000/api/profile/", {
         method: 'GET',
         credentials: "include",
         mode: "cors",
@@ -162,14 +134,49 @@ export default {
       this.details = details;
     },
 
-    async edit() {
-      const response = await fetch(`http://localhost:8000/api/edit_user}`, {
+    async updateImg() {
+      console.log("string")
+      const formData = new FormData();
+      formData.append('file', this.file);
+      const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
+      const response = await fetch("http://localhost:8000/api/profile/", {
         method: 'POST',
         credentials: "include",
         mode: "cors",
         referrerPolicy: "no-referrer",
+        headers,
+        body: formData
+      });
+      const image = await response.json();
+      this.details.image_name = image.image
+    },
+
+    async uploadFile() {
+
+      this.file = this.$refs.file.files[0];
+    },
+
+
+
+
+    async edit() {
+      const date: Number = Date.parse(this.dob)
+      const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
+      const response = await fetch("http://localhost:8000/api/profile", {
+        method: 'PUT',
+        credentials: "include",
+        mode: "cors",
+        referrerPolicy: "no-referrer",
+        headers,
+        body: JSON.stringify({
+          name: this.name,
+          surname: this.surname,
+          date_of_birth: date
+
+        })
       });
     },
+
 
     async item() {
       return

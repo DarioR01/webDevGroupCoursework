@@ -27,6 +27,6 @@ urlpatterns = [
     re_path(r'^api/home/(?P<filter>\w+)/$', views.home, name='filter'),
     path('api/item/<int:item_id>', views.item_page, name='item page'),
     path('api/item/<int:item_id>/<int:question_id>', views.question_answer, name='question answer'),
-    path('api/profile/', views.profile_page, name='profile profile'),
+    path('api/profile/', views.profile_page, name='profile'),
     path('api/profile/<int:item_id>', views.upload_item_image, name='profile profile'),
 ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

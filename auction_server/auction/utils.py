@@ -382,6 +382,7 @@ def edit_user_profile_upload_image(request: HttpRequest):
     #get user id from the session
     session_data = request.session
     user_id: int = session_data.get('_auth_user_id')
+    print(user_id)
 
     user: User = get_user(user_id)
     image = request.FILES.get('file')
