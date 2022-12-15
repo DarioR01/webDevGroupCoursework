@@ -88,20 +88,30 @@ def updated_profile_page(request: HttpRequest):
     uid: int = session_data.get('_auth_user_id')
 
     data: SimpleNamespace = json.loads(request.body, object_hook=lambda d: SimpleNamespace(**d))
-
-    # get values from request to update user object
-    try: 
-        name: str = data.name
-        surname: str = data.surname
-        email: str = data.email
-        date_of_birth: int = data.date_of_birth
-    except:
-        return HttpResponseBadRequest("Could not update the user. check that the request contains the email, date of birth and image.")
-
+    
     try: 
         user: User = get_user(uid)
     except:
         return HttpResponseBadRequest("Could not update the user. the user could not accessed")
+    
+    name: str = user.name
+    surname: str = user.surname
+    email: str = user.email
+    date_of_birth: date = user.date_of_birth
+
+    #get values from request to update user object
+    try: 
+        name = data.name
+    except: pass
+    try:
+        surname= data.surname
+    except: pass
+    try:
+        email= data.email
+    except: pass
+    try:
+        date_of_birth= data.date_of_birth
+    except: pass
 
     user.name = name
     user.surname = surname
