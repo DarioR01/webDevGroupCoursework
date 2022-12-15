@@ -140,7 +140,7 @@ export default {
       const formData = new FormData();
       formData.append('file', this.file);
       const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-      const response = await fetch(`http://localhost:8000/api/profile/}`, {
+       const response = await fetch("http://localhost:8000/api/profile/", {
         method: 'POST',
         credentials: "include",
         mode: "cors",
@@ -155,14 +155,13 @@ export default {
       this.file = this.$refs.file.files[0];
     },
 
-
-
-    {/*EDIT*/}
+    
+   
 
     async edit() {
       const date: Number = Date.parse(this.dob)
       const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-      const response = await fetch(`http://localhost:8000/api/profile/}`, {
+      const response = await fetch("http://localhost:8000/api/profile", {
         method: 'PUT',
         credentials: "include",
         mode: "cors",
