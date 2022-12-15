@@ -103,15 +103,18 @@ def question_answer(request: HttpRequest, item_id: int, question_id: int):
 from django.views.decorators.csrf import csrf_exempt
 @csrf_exempt 
 def profile_page(request: HttpRequest):
+    print(request.method)
     if request.method == 'GET':
         user: JsonResponse = build_response_body_for_get_user(request)
         return user
 
     if request.method == 'PUT':
+        print("kljfgalhjkafghjlagfklj")
         updated_profile: HttpResponseBadRequest | JsonResponse = updated_profile_page(request)
         return updated_profile
-    
+
     if request.method == 'POST':
+        print("post")
         #find better way to get 'multipart/form-data' value out of Content-type
         content_type: str = request.headers["Content-type"][:19]
         print("this is another beautiful string")
