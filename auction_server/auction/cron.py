@@ -21,8 +21,7 @@ def send_emails():
                         'You won the bid',
                         text,
                         settings.EMAIL_HOST_USER,
-                        #[user['email']],
-                        ['xodefo4522@dni8.com'],
+                        [user['email']],
                         fail_silently=False,
                     )
                     item.email_sent = True
