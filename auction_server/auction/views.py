@@ -110,15 +110,12 @@ def profile_page(request: HttpRequest):
     if request.method == 'PUT':
         updated_profile: HttpResponseBadRequest | JsonResponse = updated_profile_page(request)
         return updated_profile
-    
+
     if request.method == 'POST':
         #find better way to get 'multipart/form-data' value out of Content-type
         content_type: str = request.headers["Content-type"][:19]
-        print("this is another beautiful string")
         if content_type == "multipart/form-data":
-            print("this is a beautiful string")
             image_name: str = edit_user_profile_upload_image(request)
-            
             return image_name
 
         else:
