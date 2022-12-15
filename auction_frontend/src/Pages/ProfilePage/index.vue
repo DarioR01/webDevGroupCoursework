@@ -14,7 +14,7 @@ interface User {
     <div class="row">
       <div class="col-md-3">
         <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class="img-fluid"
-            src="http://localhost:8000/static/da.jpg">
+            :src="`http://localhost:8000/static/${details.image_name}`">
 
 
         </div>
@@ -117,7 +117,6 @@ export default {
       dob: "",
       // password: "",
       file: {},
-
     }
   },
 
@@ -140,14 +139,16 @@ export default {
       const formData = new FormData();
       formData.append('file', this.file);
       const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-       const response = await fetch("http://localhost:8000/api/profile/", {
+      const response = await fetch("http://localhost:8000/api/profile/", {
         method: 'POST',
         credentials: "include",
         mode: "cors",
         referrerPolicy: "no-referrer",
         headers,
-        body:formData   
+        body: formData
       });
+      const image = await response.json();
+      this.details.image_name = image.image
     },
 
     async uploadFile() {
@@ -155,8 +156,8 @@ export default {
       this.file = this.$refs.file.files[0];
     },
 
-    
-   
+
+
 
     async edit() {
       const date: Number = Date.parse(this.dob)
