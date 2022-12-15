@@ -112,11 +112,13 @@ def profile_page(request: HttpRequest):
         return updated_profile
     
     if request.method == 'POST':
-        #TODO find better way to get 'multipart/form-data' value out of Content-type
+        #find better way to get 'multipart/form-data' value out of Content-type
         content_type: str = request.headers["Content-type"][:19]
-
+        print("this is another beautiful string")
         if content_type == "multipart/form-data":
+            print("this is a beautiful string")
             image_name: str = edit_user_profile_upload_image(request)
+            
             return image_name
 
         else:
