@@ -22,7 +22,7 @@ def user_login(request: HttpRequest):
             user: User = authenticate(email=email, password=password)
             if user is not None:
                 login(request, user)
-                response:HttpResponse = HttpResponseRedirect('http://localhost:5173/')
+                response:HttpResponse = HttpResponseRedirect('/')
                 response.set_cookie('login', 'true') 
                 return response
             return Http404()
