@@ -10,9 +10,10 @@
       </div>
       <div class="card-footer text-muted">
         <div class="card-subtitle mb-2 display-4">{{ price }}£</div>
-        <span>ends on {{ (new Date(time)).getDay() }} {{ months[(new Date(time).getMonth())] }} {{ (new
-            Date(time)).getFullYear()
-        }}</span>
+        <span v-if="time">ends on {{ time.getDate() }} {{ months[time.getMonth()] }} {{ time.getFullYear()
+        }} at {{ (time.getHours() < 10 ? '0' : '') + time.getHours() }}:{{ (time.getMinutes() < 10 ? '0' : '') +
+    time.getMinutes()
+}}</span>
       </div>
     </div>
   </router-link>
@@ -25,7 +26,7 @@ export default {
     title: String,
     description: String,
     price: Number,
-    time: { type: Number, default: Date.now() },
+    time: Date,
     image: String,
   },
   data() {

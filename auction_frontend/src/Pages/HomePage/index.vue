@@ -11,8 +11,8 @@ import Item from '../../components/Item/index.vue'
     </form>
     <ul class="row row-cols-auto g-5 justify-content-md-center">
       <li class="col list-unstyled" v-for="item in items">
-        <Item :id="item.id" :title="item.title" :description="item.description" :price=item.price :time=item.time
-          :image="`http://localhost:8000/static/${item.image_name}`" />
+        <Item :id="item.id" :title="item.title" :description="item.description" :price=item.price
+          :time="new Date(item.final_date)" :image="`http://localhost:8000/static/${item.image_name}`" />
       </li>
     </ul>
 
@@ -30,7 +30,7 @@ export default {
 
   methods: {
     async getItems() {
-      const response = await fetch(`http://localhost:8000/api/home/`, {
+      const response = await fetch(`http://localhost:8000/bidder/api/home/`, {
         method: 'GET',
         credentials: "include",
         mode: "cors",
@@ -39,11 +39,12 @@ export default {
       const itemsObject = await response.json();
       const items = Object.values(itemsObject);
       this.items = items;
+      console.log(items)
     },
 
     async getFilter() {
       console.log(this.filter)
-      const response = await fetch(`http://localhost:8000/api/home/?filter=${this.filter}`, {
+      const response = await fetch(`http://localhost:8000/bidder/api/home/?filter=${this.filter}`, {
         method: 'GET',
         credentials: "include",
         mode: "cors",

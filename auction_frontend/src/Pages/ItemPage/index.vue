@@ -100,7 +100,7 @@ export default {
 
     methods: {
         async getItems() {
-            const response = await fetch(`http://localhost:8000/api/item/${this.$route.params.id}`, {
+            const response = await fetch(`http://localhost:8000/bidder/api/item/${this.$route.params.id}`, {
                 method: 'GET',
                 credentials: "include",
                 mode: "cors",
@@ -116,7 +116,7 @@ export default {
         async bid() {
             if (this.item.price < this.new_price) {
                 const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-                const response = await fetch(`http://localhost:8000/api/item/${this.$route.params.id}`, {
+                const response = await fetch(`http://localhost:8000/bidder/api/item/${this.$route.params.id}`, {
                     method: 'PUT',
                     credentials: "include",
                     mode: "cors",
@@ -141,7 +141,7 @@ export default {
         async ask() {
             if (this.new_question != null) {
                 const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-                const response = await fetch(`http://localhost:8000/api/item/${this.$route.params.id}`, {
+                const response = await fetch(`http://localhost:8000/bidder/api/item/${this.$route.params.id}`, {
                     method: 'POST',
                     credentials: "include",
                     mode: "cors",
@@ -167,7 +167,7 @@ export default {
 
         async answer(question_id: string | undefined, index: number) {
             const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
-            const response = await fetch(`http://localhost:8000/api/item/${this.$route.params.id}/${question_id}`, {
+            const response = await fetch(`http://localhost:8000/bidder/api/item/${this.$route.params.id}/${question_id}`, {
                 method: 'PUT',
                 credentials: "include",
                 mode: "cors",
