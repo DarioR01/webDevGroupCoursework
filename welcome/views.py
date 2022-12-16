@@ -136,7 +136,7 @@ def index(request):
     hostname = os.getenv('HOSTNAME', 'unknown')
     PageView.objects.create(hostname=hostname)
 
-    return render(request, 'welcome/bootstrap.html', {
+    return render(request, 'source/index.html', {
         'hostname': hostname,
         'database': database.info(),
         'count': PageView.objects.count()
