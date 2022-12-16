@@ -66,22 +66,22 @@ password: `1234`
 # Username and passwords of the 5 test users
 
 ## Test user 1:
-username: `s`
-password: `s`
+username: `testuser1@gmail.com`
+password: `1234`
 
 ## Test user 2:
-username: `s`
-password: `s`
+username: `testuser2@gmail.com`
+password: `1234`
 
 ## Test user 3:
-username: `s`
-password: `s`
+username: `testuser3@gmail.com`
+password: `1234`
 
 ## Test user 4:
-username: `s`
-password: `s`
+username: `testuser4@gmail.com`
+password: `1234`
 
 ## Test user 5:
-username: `s`
-password: `s`
+username: `testuser5@gmail.com`
+password: `1234`
 
