@@ -44,7 +44,7 @@ export default {
 
     async getFilter() {
       console.log(this.filter)
-      const response = await fetch(`http://localhost:8000/bidder/api/home/?home_filter=${this.filter}`, {
+      const response = await fetch(`http://localhost:8000/bidder/api/home/?filter=${this.filter}`, {
         method: 'GET',
         credentials: "include",
         mode: "cors",

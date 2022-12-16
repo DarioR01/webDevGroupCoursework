@@ -100,26 +100,27 @@ def updated_profile_page(request: HttpRequest):
     date_of_birth: date = user.date_of_birth
 
     #get values from request to update user object
-    try: 
+    if(data.name != "" and data.name != None):
         name = data.name
         user.name = name
         user.save()
-    except: pass
-    try:
-        surname= data.surname
+
+    if(data.surname != "" and data.surname != None):
+        surname = data.surname
         user.surname = surname
         user.save()
-    except: pass
-    try:
+
+    if(data.email != "" and data.email != None):
         email= data.email
         user.email = email
         user.save()
-    except: pass
-    try:
+
+
+    if(data.date_of_birth != "" and data.date_of_birth != None):
         date_of_birth= data.date_of_birth
         user.date_of_birth = date_of_birth
         user.save()
-    except: pass
+  
     
     serialised_user: dict[str, str | date] = serialise_user(user)
     return JsonResponse(serialised_user)

@@ -3,7 +3,8 @@ import { getCookie } from '../../utility'
 interface User {
   name: String;
   surname: String;
-  email: String
+  email: String;
+  date_of_first: Date;
 }
 </script>
 
@@ -13,9 +14,12 @@ interface User {
       <div class="col-md-3">
         <div class="d-flex flex-column p-4 py-6 align-items-center text-center img_container"><img class="img-fluid"
             :src="`http://localhost:8000/static/${details.image_name}`">
-          <span class="font-weight-bold">{{ details.name }}</span><span class="text-black-50">{{ details.surname
-          }}</span><span><span class="text-black-50">{{ details.email }}</span>
-          </span>
+
+          <span class="font-weight-bold">{{ details.name }}</span>
+          <span class="text-black-50">{{ details.surname }}</span>
+          <span class="text-black-50">{{ details.email }}</span>
+          <span class="text-black-50">{{ details.date_of_birth }}</span>
+         
 
 
         </div>
@@ -37,6 +41,9 @@ interface User {
               </div>
               <div class="col-md-6"><label>Surname</label><input type="text" class="form-control" v-model="surname"
                   placeholder="surname">
+              </div>
+              <div class="col-md-6"><label>Email</label><input type="text" class="form-control" v-model="email"
+                  placeholder="Email">
               </div>
               <div class="col-md-6"><label>DOB</label>
                 <input type="date" class="form-control" v-model="dob" placeholder="date of birth">
@@ -67,26 +74,30 @@ interface User {
       <div class="row">
         <h4>Add Items</h4>
         <div class="row mt-2">
-          <div class="col-md-3 mb-5"><input type="text" v-model="title" class="form-control" placeholder="title" />
+          <div class="col-md-3 mb-3"><input type="text" v-model="title" class="form-control" placeholder="title" />
           </div>
-          <div class="col-md-3 mb-5"><input type="text" v-model="price" class="form-control"
-              placeholder="starting price">
+          <div class="col-md-3 mb-3 d-flex">
+            <div ><input type="number" :min="1" v-model="price" class="form-control"
+                placeholder="starting price">
+            </div>
+            <span class="h2">£</span>
           </div>
-          <div>
+          <div class="mb-3">
 
-            <label for="item">Item end date</label>
+            <label for="item">Bid End Date & Time:</label>
             <input type="datetime-local" v-model="end_date" id="item" name="birthday" />
 
           </div>
 
+          <div class="col-md-6">
+            <textarea class="form-control mb-3" v-model="description" placeholder="Add description" rows="3"></textarea>
+          </div>
 
-          <div>
+
+          <div class="mb-3">
             <input type="file" ref="itemFile" @change="uploadItemImg" />
           </div>
 
-        </div>
-        <div class="col-md-6">
-          <textarea class="form-control" v-model="description" placeholder="Add description" rows="3"></textarea>
         </div>
         <div class="d-flex justify-content-between align-items-center mt-3">
           <button type="submit" class="btn btn-primary mb-5 btn-sm">Submit Item</button>
@@ -121,6 +132,7 @@ export default {
       details: this.get_details(),
       name: "",
       surname: "",
+      email: "",
       dob: "",
       file: "",
       title: "",
@@ -142,7 +154,7 @@ export default {
         mode: "cors",
         referrerPolicy: "no-referrer",
       });
-      const details = await response.json();
+      const details = await response.json() as User;
       this.details = details;
     },
     async updateImg() {
@@ -176,9 +188,12 @@ export default {
         body: JSON.stringify({
           name: this.name,
           surname: this.surname,
+          email: this.email,
           date_of_birth: date
         })
       });
+      const details = await response.json() as User;
+      this.details = details;
     },
     async item() {
       let date: Number = new Date(this.end_date).getTime();
@@ -196,19 +211,38 @@ export default {
           description: this.description
         })
       });
-      const data = await response.json()
-      const id = data.id
-      console.log(id)
-      const formData = new FormData();
-      formData.append('file', this.item_image);
-      const secondResponse = await fetch(`http://localhost:8000/bidder/api/profile/${id}`, {
-        method: 'POST',
-        credentials: "include",
-        mode: "cors",
-        referrerPolicy: "no-referrer",
-        headers,
-        body: formData
-      });
+      if(response.status === 200){
+        const data = await response.json()
+        const id = data.id
+        console.log(id)
+        const formData = new FormData();
+        formData.append('file', this.item_image);
+        const secondResponse = await fetch(`http://localhost:8000/bidder/api/profile/${id}`, {
+          method: 'POST',
+          credentials: "include",
+          mode: "cors",
+          referrerPolicy: "no-referrer",
+          headers,
+          body: formData
+        });
+
+        this.title=""
+        this.price=""
+        this.end_date=""
+        this.description=""
+        this.item_image=""
+
+        if(response.status === 200 && secondResponse.status === 200){
+          alert("item successfully submitted")
+        }
+        else{
+          alert("There has been an issue with the image file, and your item has been submitted without images")
+        }
+      }
+      else{
+        alert("Item could not be submitted, make sure your fields are correct")
+      }
+        
     },
     async uploadItemImg() {
       this.item_image = this.$refs.itemFile.files[0];
