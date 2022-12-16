@@ -63,7 +63,7 @@ class Item(models.Model):
     price = models.IntegerField(editable=True)
     image = models.ImageField(upload_to='./welcome/static', default="./welcome/static/default_item.jpg", null=True, editable=True)
     image_name = models.CharField(max_length=30, null=True, editable=True)
-    final_date   = models.DateTimeField(default=datetime.datetime.now() + datetime.timedelta(days=7), editable=True)
+    final_date   = models.DateTimeField(editable=True)
     email_sent = models.BooleanField(default=False, null=False, editable=True )
     highest_bidder = models.ForeignKey('welcome.User', null=True, related_name='highest_bidder_set', on_delete=models.CASCADE)
     owner = models.ForeignKey('welcome.User', null=True,related_name='owner_set_item' ,on_delete=models.CASCADE)
