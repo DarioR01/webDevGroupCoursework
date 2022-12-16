@@ -67,7 +67,13 @@ def user_logout(request: HttpRequest):
     return Http404()
 
 
-def home(request: HttpRequest, filter: None = None):
+def home(request: HttpRequest):
+    try:
+        filter = request.GET["filter"]
+        
+    except:
+        filter = None
+    
     if request.method == 'GET':
         items: HttpResponseBadRequest | dict = get_list_of_items(request, filter)
         return items
