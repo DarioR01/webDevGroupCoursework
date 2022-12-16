@@ -1,87 +1,126 @@
 # list of group members
 
+# Contributors
 ## Russo Dario
-Assigned role: `frontend developer`
-## Stancheva Yanitsa
-Assigned role: `frontend developer`
-
-## Iandiorio Virginia
-Assigned role: `backend developer`
-## Svarca Orgesa
-Assigned role: `backend devloper`
-
-# Contribution statement
-## Russo Dario
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
-
-Independently assigned taks:
-- redesing using django framework `../api/login` view 
-- redesing using django framework`../api/register` view
-- redesing using django framework`../api/logout` view   
-- upload image POC
+Contribution:
+- Redesign using django framework `..bidder/api/login` view 
+- Redesign using django framework`..bidder/api/register` view
+- Redesign using django framework`..bidder/api/logout` view   
+- Upload image Proof Of Concept
+- Implement email send handler and crontab
+- Implement redesign for login
+- Implement registration page
+- Implement home page frontend
+- Implement Item Page frontend 
+- Implement Vue Routing
 
 ## Stancheva Yanitsa
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
+Contribution:
+- Application design
+- First login page iteration
+- Implement frontend for user profile page
+- Implement frontend for profile update
+- Implement frontend for create item
 
-Independently assigned taks:
 ## Iandiorio Virginia
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
-
-Independently assigned taks:
+Contribution:
+- Application design
 - User model desing
-- `../api/login` view with linked utils functions
-- `../api/register` view with linked utils functions
-- `../api/logout` view with linked utils functions
-- `../api/home` view with linked utils functions
-- `../api/home/(?P<filter>\w+)/$` view with linked utils functions
-- `../api/item/<int:item_id>` view with linked utils functions
-- `../api/item/<int:item_id>/<int:question_id>` view with linked utils functions
-- redesign - `../api/profile` view with linked utils functions
-- redeisng `../api/profile/<int:item_id` view with linked utils functions
-- `../api/profile/<int:item_id>` upload image full implementation
+- `..bidder/api/login` view with linked utils functions
+- `..bidder/api/register` view with linked utils functions
+- `..bidder/api/logout` view with linked utils functions
+- `..bidder/api/home` view with linked utils functions
+- `..bidder/api/home/(?P<filter>\w+)/$` view with linked utils functions
+- `..bidder/api/item/<int:item_id>` view with linked utils functions
+- `..bidder/api/item/<int:item_id>/<int:question_id>` view with linked utils functions
+- redesign - `..bidder/api/profile` view with linked utils functions
+- redeisng `..bidder/api/profile/<int:item_id>` view with linked utils functions
+- `..bidder/api/profile/<int:item_id>` upload image full implementation
 - backend testing
-## Svarca Orgesa
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
 
-Independently assigned taks:
-- Item model desing
+## Svarca Orgesa
+Contribution:
+- Item model design
 - Question model design
-- `../api/profile` view with linked utils functions
-- `../api/profile/<int:item_id` view with linked utils functions
-- Openshift 
+- `..bidder/api/profile` view with linked utils functions
+- `..bidder/api/profile/<int:item_id` view with linked utils functions
+- Openshift Deployment
 
 # URL of deployed application
+N/A
+
 # Username and password for the admin page
+start your experience from localhost:8000/bidder/api/login
 ## Admin user:
 username: `superuser@gmail.com`
 password: `1234`
 # Username and passwords of the 5 test users
 
 ## Test user 1:
-username: `s`
-password: `s`
+username: `user1@gmail.com`
+password: `1234`
 
 ## Test user 2:
-username: `s`
-password: `s`
+username: `user2@gmail.com`
+password: `1234`
 
 ## Test user 3:
-username: `s`
-password: `s`
+username: `user3@gmail.com`
+password: `1234`
 
 ## Test user 4:
-username: `s`
-password: `s`
+username: `user4@gmail.com`
+password: `1234`
 
 ## Test user 5:
-username: `s`
-password: `s`
+username: `user5@gmail.com`
+password: `1234`
 
+# Local App
+You will need 2 terminals
+
+frontend:
+
+```bash
+cd auction_frontend
+npm install
+npm run dev
+```
+
+If migration are alredy created backend:
+
+```bash
+python manage.py runserver
+```
+
+If migrations are not yet performed:
+
+```bash
+python manage.py makemigrations welcome
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+```
+
+# Frontend pages overview:
+
+## Home Page:
+Shows item that are submitted in the profile page (Only shows items that have an in-progress bid)
+Filter items by keywords (This uses both name and description of the item)
+Link to single item pages by clicking on the item
+
+## Profile Page:
+In Profile page you can:
+- Update user's information
+- Update user's image
+- Post a new item
+
+## Single Item Page:
+In single item page you can:
+- Bid for an item
+- Ask question
+- Answer questions (Only the owner of the item can answer question, otherwise you will get an alert())
+
+# Backend overview:
+- Only jpg image are allowed.
+- Price is in Integer

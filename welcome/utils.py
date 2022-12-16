@@ -115,10 +115,10 @@ def updated_profile_page(request: HttpRequest):
         user.email = email
         user.save()
 
-
+    print("here")
     if(data.date_of_birth != "" and data.date_of_birth != None):
         date_of_birth= data.date_of_birth
-        user.date_of_birth = date_of_birth
+        user.date_of_birth = date.fromtimestamp(int(date_of_birth/1000))
         user.save()
   
     

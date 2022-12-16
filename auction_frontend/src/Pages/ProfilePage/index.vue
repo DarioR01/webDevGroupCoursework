@@ -158,7 +158,6 @@ export default {
       this.details = details;
     },
     async updateImg() {
-      console.log("string")
       const formData = new FormData();
       formData.append('file', this.file as string);
       const headers = new Headers([['X-CSRFToken', getCookie('csrftoken')]]);
@@ -214,7 +213,6 @@ export default {
       if(response.status === 200){
         const data = await response.json()
         const id = data.id
-        console.log(id)
         const formData = new FormData();
         formData.append('file', this.item_image);
         const secondResponse = await fetch(`http://localhost:8000/bidder/api/profile/${id}`, {
