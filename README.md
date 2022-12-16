@@ -1,87 +1,32 @@
-# list of group members
+# webDevGroupCoursework
 
-## Russo Dario
-Assigned role: `frontend developer`
-## Stancheva Yanitsa
-Assigned role: `frontend developer`
+## Backend
 
-## Iandiorio Virginia
-Assigned role: `backend developer`
-## Svarca Orgesa
-Assigned role: `backend devloper`
 
-# Contribution statement
-## Russo Dario
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
+Defualt url path is `http://127.0.0.1:8000/`
 
-Independently assigned taks:
-- redesing using django framework `../api/login` view 
-- redesing using django framework`../api/register` view
-- redesing using django framework`../api/logout` view   
-- upload image POC
+## Backend users
 
-## Stancheva Yanitsa
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
+Django Admin view has been implemented with a superuser with the following login details
 
-Independently assigned taks:
-## Iandiorio Virginia
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
+- email `admin@gmail.com`
+- password `admin`
 
-Independently assigned taks:
-- User model desing
-- `../api/login` view with linked utils functions
-- `../api/register` view with linked utils functions
-- `../api/logout` view with linked utils functions
-- `../api/home` view with linked utils functions
-- `../api/home/(?P<filter>\w+)/$` view with linked utils functions
-- `../api/item/<int:item_id>` view with linked utils functions
-- `../api/item/<int:item_id>/<int:question_id>` view with linked utils functions
-- redesign - `../api/profile` view with linked utils functions
-- redeisng `../api/profile/<int:item_id` view with linked utils functions
-- `../api/profile/<int:item_id>` upload image full implementation
-- backend testing
-## Svarca Orgesa
-Assigned tasks:
-- Database design COMPLETED
-- URLs design COMPLETED
+### Testing the backend in local env
+from django.views.decorators.csrf import csrf_exempt
+@csrf_exempt 
 
-Independently assigned taks:
-- Item model desing
-- Question model design
-- `../api/profile` view with linked utils functions
-- `../api/profile/<int:item_id` view with linked utils functions
-- Openshift 
+### **Integration with frontend in local env**
 
-# URL of deployed application
-# Username and password for the admin page
-## Admin user:
-username: `superuser@gmail.com`
-password: `1234`
-# Username and passwords of the 5 test users
+The frontend urls that backend is configured to support in local env are:
+`'http://localhost:5173'`
+`'http://127.0.0.1:5173'`
 
-## Test user 1:
-username: `s`
-password: `s`
+### **Imported libraries**
 
-## Test user 2:
-username: `s`
-password: `s`
+Requirements have been detailed in `requirements.txt` file. 
 
-## Test user 3:
-username: `s`
-password: `s`
+To update requirements after installing a library run the command:
+`pip freeze > requirements.txt`
 
-## Test user 4:
-username: `s`
-password: `s`
-
-## Test user 5:
-username: `s`
-password: `s`
 
